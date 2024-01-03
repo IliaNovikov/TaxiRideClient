@@ -1,0 +1,20 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.TaxiXML" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="fontFamily">@font/inter</item>
+    </style>
+
+    <style name="Theme.TaxiXML" parent="Base.Theme.TaxiXML" />
+
+    <color name="primaryColor">#F5F5F5</color>
+    <color name="secondaryColor">#EAEAEA</color>
+    <color name="backgroundColor">#F1F1F1</color>
+    <color name="accentColor" tools:override="true">#111111</color>
+    <color name="mainTextColor">#0A0A0A</color>
+    <color name="subTextColor">#535353</color>
+    <color name="errorColor">#D33D3D</color>
+    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#111111</color>
+
+</resources>

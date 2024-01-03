@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="base_edittext_style" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/accentColor</item>
+        <item name="cursorColor">@color/accentColor</item>
+        <item name="hintTextColor">@color/accentColor</item>
+        <item name="endIconMode">clear_text</item>
+        <item name="boxBackgroundMode">outline</item>
+        <item name="fontFamily">@font/inter</item>
+
+    </style>
+
+    <style name="main_button_style" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/accentColor</item>
+        <item name="android:fontFamily">@font/inter_semibold</item>
+        <item name="android:textColor">@color/secondaryColor</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="bordered_button_style">
+        <item name="android:background">@null</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="android:fontFamily">@font/inter_semibold</item>
+        <item name="android:textColor">@color/accentColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">10dp</item>
+    </style>
+
+    <style name="main_title_style">
+        <item name="android:fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="main_rounded_button_style">
+        <item name="android:background">@drawable/circle_button_background</item>
+        <item name="android:backgroundTint">@color/primaryColor</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:tint">@color/accentColor</item>
+    </style>
+
+    <style name="main_text_style">
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textColor">@color/accentColor</item>
+        <item name="android:textSize">10pt</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.MaterialCardView.Cut" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">24dp</item>
+        <item name="cornerSizeTopLeft">24dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+</resources>

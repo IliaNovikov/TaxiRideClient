@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name" translatable="false">TaxiRide</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="authorization">Authorization</string>
+    <string name="phone_number">Phone number</string>
+    <string name="code">Code</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_in_via_email">Sign in via email</string>
+    <string name="registration">Registration</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in_via_phone">Sign in via phone</string>
+    <string name="sign_up">Sign up</string>
+    <string name="order_a_taxi">Order a taxi</string>
+    <string name="search">Search</string>
+    <string name="econom">Econom</string>
+    <string name="comfort">Comfort</string>
+    <string name="business">Business</string>
+    <string name="cost">Cost</string>
+    <string name="settings">Settings</string>
+    <string name="personal_info">Personal info</string>
+    <string name="payment_method">Payment method</string>
+    <string name="cash">Cash</string>
+    <string name="card">Card</string>
+    <string name="add_new_card">Add new card</string>
+    <string name="saved_addresses">Saved addresses</string>
+    <string name="add_new_address">Add new address</string>
+    <string name="add_card">Add card</string>
+    <string name="card_number">Card Number</string>
+    <string name="month_year">Month/Year</string>
+    <string name="cvc" translatable="false">CVC</string>
+    <string name="go_back">Go back</string>
+    <string name="add_address">Add address</string>
+    <string name="city">City</string>
+    <string name="street">Street</string>
+    <string name="house">House</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="name">Name</string>
+    <string name="phone_number_verification">Phone number verification</string>
+    <string name="request_code">Request the code</string>
+    <string name="re_request_the_code">Re-request the code</string>
+    <string name="enter_the_password">Enter the code</string>
+    <string name="time_for_rerequest_code">Time for re-request code:</string>
+    <string name="whats_your_name">What\'s your name?</string>
+    <string name="continue_text">Continue</string>
+</resources>
