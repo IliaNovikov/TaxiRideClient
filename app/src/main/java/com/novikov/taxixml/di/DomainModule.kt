@@ -2,6 +2,7 @@ package com.novikov.taxixml.di
 
 import com.novikov.taxixml.domain.repository.UserPositionRepository
 import com.novikov.taxixml.domain.usecase.GetUserPositionUseCase
+import com.novikov.taxixml.domain.usecase.SearchByAddressUseCase
 import com.novikov.taxixml.domain.usecase.SetUserPositionUseCase
 import dagger.Module
 import dagger.Provides

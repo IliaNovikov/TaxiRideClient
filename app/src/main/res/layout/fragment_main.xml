@@ -25,7 +25,7 @@
         </com.yandex.mapkit.mapview.MapView>
 
         <ImageButton
-            android:id="@+id/ibSettings"
+            android:id="@+id/btnSettings"
             style="@style/main_rounded_button_style"
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -37,7 +37,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/ibToUserLocation"
+            android:id="@+id/btnToUserLocation"
             style="@style/main_rounded_button_style"
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -65,13 +65,13 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/tvOrderTaxi"
                     style="@style/main_text_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="4dp"
-                    android:text="@string/order_a_taxi" />
+                    android:text="@string/search" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -83,6 +83,7 @@
                     android:layout_gravity="center_horizontal">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/etSearchLayout"
                         style="@style/base_edittext_style"
                         android:layout_width="280dp"
                         android:layout_height="wrap_content"
@@ -92,13 +93,14 @@
                         app:startIconDrawable="@drawable/search_icon">
 
                         <EditText
-                            android:id="@+id/etCode"
+                            android:id="@+id/etSearch"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:inputType="text" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <ImageButton
+                        android:id="@+id/btnAddressMark"
                         android:layout_width="56dp"
                         android:layout_height="56dp"
                         android:layout_gravity="center_vertical"
@@ -121,6 +123,7 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cvEconomy"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:strokeWidth="4dp"
@@ -131,7 +134,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Econom"
+                                android:text="@string/economy"
                                 android:textStyle="bold"
                                 android:layout_marginVertical="6dp"
                                 android:layout_marginHorizontal="24dp"
@@ -142,6 +145,7 @@
                         </com.google.android.material.card.MaterialCardView>
 
                         <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cvComfort"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:strokeWidth="2dp"
@@ -151,7 +155,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Comfort"
+                                android:text="@string/comfort"
                                 android:textStyle="bold"
                                 android:layout_marginVertical="6dp"
                                 android:layout_marginHorizontal="24dp"
@@ -162,6 +166,7 @@
                         </com.google.android.material.card.MaterialCardView>
 
                         <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cvBusiness"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:strokeWidth="2dp"
@@ -172,7 +177,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Business"
+                                android:text="@string/business"
                                 android:textStyle="bold"
                                 android:layout_marginVertical="6dp"
                                 android:layout_marginHorizontal="24dp"
@@ -187,13 +192,14 @@
                 </HorizontalScrollView>
 
                 <TextView
+                    android:id="@+id/tvCost"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/main_text_style"
                     android:layout_gravity="center_horizontal"
-                    android:text="Cost: 0"
+                    android:text=""
                     android:textSize="8pt"
-                    android:layout_marginTop="16dp"/>
+                    android:layout_marginVertical="16dp"/>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

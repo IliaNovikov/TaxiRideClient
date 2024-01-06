@@ -12,7 +12,6 @@
     <string name="sign_up">Зарегестрироваться</string>
     <string name="order_a_taxi">Заказать такси</string>
     <string name="search">Поиск</string>
-    <string name="econom">Эконом</string>
     <string name="comfort">Комфорт</string>
     <string name="business">Бизнес</string>
     <string name="cost">Стоимость</string>
@@ -41,4 +40,5 @@
     <string name="time_for_rerequest_code">Время до повторного запроса кода:</string>
     <string name="whats_your_name">Как к вам можно обращаться?</string>
     <string name="continue_text">Продолжить</string>
+    <string name="economy">Эконом</string>
 </resources>

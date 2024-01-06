@@ -1,27 +1,170 @@
 package com.novikov.taxixml.presentation.viewmodel
 
 import android.app.Application
+import android.os.Handler
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.novikov.taxixml.R
 import com.novikov.taxixml.domain.model.Position
 import com.novikov.taxixml.domain.usecase.GetUserPositionUseCase
+import com.novikov.taxixml.domain.usecase.SearchByAddressUseCase
+import com.novikov.taxixml.domain.usecase.SearchByPointUseCase
 import com.novikov.taxixml.domain.usecase.SetUserPositionUseCase
+import com.yandex.mapkit.BaseMetadata
+import com.yandex.mapkit.GeoObject
+import com.yandex.mapkit.GeoObjectCollection
+import com.yandex.mapkit.geometry.Geometry
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.TextStyle
+import com.yandex.mapkit.map.VisibleRegionUtils
+import com.yandex.mapkit.search.BusinessObjectMetadata
+import com.yandex.mapkit.search.Response
+import com.yandex.mapkit.search.SearchFactory
+import com.yandex.mapkit.search.SearchManager
+import com.yandex.mapkit.search.SearchManagerType
+import com.yandex.mapkit.search.SearchOptions
+import com.yandex.mapkit.search.SearchType
+import com.yandex.mapkit.search.Session
+import com.yandex.mapkit.search.ToponymObjectMetadata
+import com.yandex.mapkit.search.search_layer.SearchLayer
+import com.yandex.runtime.Error
+import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @HiltViewModel
 class MainFragmentViewModel @Inject constructor(
     private val app: Application,
     private val getUserPositionUseCase: GetUserPositionUseCase,
-    private val setUserPositionUseCase: SetUserPositionUseCase
+    private val setUserPositionUseCase: SetUserPositionUseCase,
 ) : AndroidViewModel(app) {
 
     var position: MutableLiveData<Position> = MutableLiveData()
+    var searchString:MutableLiveData<String> = MutableLiveData()
+    var geoObjects: List<GeoObjectCollection.Item> = ArrayList()
+    var geoObject: GeoObject = GeoObject()
+
+    private val searchByAddressUseCase = SearchByAddressUseCase()
+    private val searchByPointUseCase = SearchByPointUseCase()
 
     suspend fun getCurrentPosition(){
         position.value = getUserPositionUseCase.execute()
+    }
+
+    suspend fun getSearchResults(map: Map){
+//        geoObjects = searchByAddressUseCase.execute(searchString, map)
+
+        map.mapObjects.clear()
+
+        val userLocation = map.mapObjects.addPlacemark(Point(position.value?.latitude!!, position.value!!.longitude))
+
+        userLocation.setIcon(ImageProvider.fromResource(app.baseContext, R.drawable.map_mark))
+        userLocation.setText("Вы здесь", TextStyle().apply {
+            offset = -2f
+            placement = TextStyle.Placement.BOTTOM
+        })
+
+        Log.i("vm", "start")
+
+        geoObjects = searchByAddressUseCase.execute(searchString.value.toString(), map)
+
+        for (geo in geoObjects){
+            val placemark = map.mapObjects.addPlacemark(geo.obj!!.geometry[0].point!!)
+
+            placemark.setIcon(ImageProvider.fromResource(app.baseContext, R.drawable.map_point_icon))
+
+            try {
+                val address = geo.obj!!.metadataContainer.getItem(ToponymObjectMetadata::class.java).address
+                var stringAddress = address.formattedAddress
+
+                stringAddress = stringAddress.split(',').drop(2).joinToString()
+
+                Log.i("vm.addresses.toponym", stringAddress)
+                placemark.setText(stringAddress, TextStyle().apply {
+                    offset = -2f
+                    placement = TextStyle.Placement.BOTTOM
+                })
+            }
+            catch (e: NullPointerException){
+                val address = geo.obj!!.metadataContainer.getItem(BusinessObjectMetadata::class.java).address
+                var stringAddress = address.formattedAddress
+
+                stringAddress = stringAddress.split(',').drop(2).joinToString()
+
+                Log.i("vm.addresses.business", geo.obj!!.metadataContainer.getItem(BusinessObjectMetadata::class.java)?.name.toString())
+
+                placemark.setText(geo.obj!!.metadataContainer.getItem(BusinessObjectMetadata::class.java)?.name.toString(), TextStyle().apply {
+                    offset = -2f
+                    placement = TextStyle.Placement.BOTTOM
+                })
+            }
+        }
+
+//        val searchManager = SearchFactory.getInstance().createSearchManager(
+//            SearchManagerType.COMBINED)
+//
+//        val searchOptions = SearchOptions()
+//
+////        val searchSessionListener = object : Session.SearchListener {
+////            override fun onSearchResponse(p0: Response) {
+////                Log.i("sbauc", "response")
+////                geoObjects = p0.collection.children
+////                Log.i("sbaucgo", geoObjects.size.toString())
+////                Log.i("sbauc", p0.collection.children.size.toString())
+////            }
+////
+////            override fun onSearchError(p0: Error) {
+////                Log.e("sbauc", p0.toString())
+////            }
+////        }
+//
+//        val session = searchManager.submit(searchString.value.toString(),
+//            Geometry.fromPoint(Point(position.value?.latitude!!, position.value!!.longitude)) ,
+//            searchOptions,
+//            object : Session.SearchListener {
+//                override fun onSearchResponse(p0: Response) {
+//                    Log.i("sbauc", "response")
+//                    geoObjects = p0.collection.children
+//                    Log.i("sbaucgo", geoObjects.size.toString())
+//                    Log.i("sbauc", p0.collection.children.size.toString())
+//
+//                    for (geo in geoObjects){
+//                        val placemark = map.mapObjects.addPlacemark(geo.obj!!.geometry[0].point!!)
+//
+//                        placemark.setIcon(ImageProvider.fromResource(app.baseContext, R.drawable.map_point_icon))
+//                        placemark.setText("Цель", TextStyle().apply {
+//                            offset = -2f
+//                            placement = TextStyle.Placement.BOTTOM
+//                        })
+//                    }
+//                }
+//
+//                override fun onSearchError(p0: Error) {
+//                    Log.e("sbauc", p0.toString())
+//                }
+//            }
+//        )
+    }
+
+//    suspend fun getSearchByPointResult(){
+//
+//    }
+
+    suspend fun getPointSearchResult(point: Point, map: Map){
+        val resultGeoObject = searchByPointUseCase.execute(point, map)
+        try {
+            Log.i("vmpoint", resultGeoObject.obj?.metadataContainer!!.getItem(BusinessObjectMetadata::class.java).name)
+        }
+        catch (e: Exception){
+            Log.e("vmpointe", resultGeoObject.obj?.metadataContainer!!.getItem(ToponymObjectMetadata::class.java).address.formattedAddress)
+        }
+        geoObject = resultGeoObject.obj!!
     }
 
 }

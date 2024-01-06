@@ -28,7 +28,8 @@ class AuthorizationNameFragment : Fragment() {
 
         binding.btnContinue.setOnClickListener {
             UserInfo.name = binding.etName.text.toString()
-            NavigationController.navHost.navigate(R.id.action_authorizationViaEmailFragment_to_authorizationViaPhoneFragment)
+            NavigationController.navHost.navigate(R.id.mainFragment)
+
         }
 
         return binding.root

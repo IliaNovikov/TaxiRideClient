@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.novikov.taxixml.R
 import com.novikov.taxixml.databinding.ActivityMainBinding
 import com.novikov.taxixml.singleton.NavigationController
+import com.novikov.taxixml.singleton.UserInfo
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         NavigationController.navHost = navHostFragment.navController
 
-        if (FirebaseAuth.getInstance().currentUser != null){
+        if (FirebaseAuth.getInstance().currentUser != null && UserInfo.name.isNotEmpty()){
             Log.i("firebaseUser", FirebaseAuth.getInstance().currentUser?.uid.toString())
             NavigationController.navHost.navigate(R.id.mainFragment)
             Toast.makeText(this, FirebaseAuth.getInstance().currentUser?.phoneNumber, Toast.LENGTH_LONG).show()

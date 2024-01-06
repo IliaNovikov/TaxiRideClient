@@ -95,7 +95,7 @@ class CodeFragment : Fragment() {
             auth.signInWithCredential(credential).addOnCompleteListener {
                 if(it.isSuccessful){
                     Toast.makeText(requireContext(), "Welcome", Toast.LENGTH_SHORT).show()
-                    NavigationController.navHost.navigate(R.id.action_codeFragment_to_mainFragment)
+                    NavigationController.navHost.navigate(R.id.authorizationNameFragment)
                 }
                 else
                     Toast.makeText(requireContext(), it.exception.toString(), Toast.LENGTH_SHORT).show()

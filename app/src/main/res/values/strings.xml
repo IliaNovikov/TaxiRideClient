@@ -14,7 +14,6 @@
     <string name="sign_up">Sign up</string>
     <string name="order_a_taxi">Order a taxi</string>
     <string name="search">Search</string>
-    <string name="econom">Econom</string>
     <string name="comfort">Comfort</string>
     <string name="business">Business</string>
     <string name="cost">Cost</string>
@@ -44,4 +43,5 @@
     <string name="time_for_rerequest_code">Time for re-request code:</string>
     <string name="whats_your_name">What\'s your name?</string>
     <string name="continue_text">Continue</string>
+    <string name="economy">Economy</string>
 </resources>
