@@ -1,5 +1,8 @@
 package com.novikov.taxixml.presentation.view.fragment
 
+import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -26,12 +29,18 @@ class AuthorizationViaPhoneFragment : Fragment() {
     private lateinit var phoneCallback: PhoneAuthProvider.OnVerificationStateChangedCallbacks
     private lateinit var auth: FirebaseAuth
 
+    private lateinit var loadingDialog: AlertDialog
+
     lateinit var binding: FragmentAuthorizationViaPhoneBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        loadingDialog = AlertDialog.Builder(requireContext(), androidx.appcompat.R.style.ThemeOverlay_AppCompat_Dialog).apply {
+            setView(R.layout.dialog_loading)
+        }.create()
 
         binding = FragmentAuthorizationViaPhoneBinding.inflate(layoutInflater)
 
@@ -41,6 +50,7 @@ class AuthorizationViaPhoneFragment : Fragment() {
 
         phoneCallback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
             override fun onVerificationCompleted(p0: PhoneAuthCredential) {
+                loadingDialog.dismiss()
                 auth.signInWithCredential(p0).addOnCompleteListener {
                     if (it.isSuccessful){
                         Toast.makeText(requireContext(), "Welcome", Toast.LENGTH_SHORT).show()
@@ -53,10 +63,12 @@ class AuthorizationViaPhoneFragment : Fragment() {
             }
 
             override fun onVerificationFailed(p0: FirebaseException) {
+                loadingDialog.dismiss()
                 Toast.makeText(requireContext(), p0.message.toString(), Toast.LENGTH_SHORT).show()
             }
 
             override fun onCodeSent(p0: String, p1: PhoneAuthProvider.ForceResendingToken) {
+                loadingDialog.dismiss()
                 UserInfo.phone = "+7" + binding.etPhoneNumber.unMasked
                 NavigationController.navHost.navigate(R.id.action_authorizationViaPhoneFragment_to_codeFragment, bundleOf("code_id" to p0))
             }
@@ -68,7 +80,17 @@ class AuthorizationViaPhoneFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.btnRequestCode.setOnClickListener {
-            authUser()
+            loadingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            loadingDialog.show()
+            if(binding.etPhoneNumber.unMasked.length == 10
+                && binding.etPhoneNumber.unMasked.all { it.isDigit() })
+                authUser()
+            else{
+                if(binding.etPhoneNumber.unMasked.length < 10)
+                    binding.etPhoneNumberLayout.error = "Мало цифр"
+                if (!binding.etPhoneNumber.unMasked.all { it.isDigit() })
+                    binding.etPhoneNumberLayout.error = "Должны быть только цифры"
+            }
         }
 
     }

@@ -1,8 +1,11 @@
 package com.novikov.taxixml.di
 
+import com.novikov.taxixml.domain.repository.UserDataRepository
 import com.novikov.taxixml.domain.repository.UserPositionRepository
+import com.novikov.taxixml.domain.usecase.GetUserDataUseCase
 import com.novikov.taxixml.domain.usecase.GetUserPositionUseCase
 import com.novikov.taxixml.domain.usecase.SearchByAddressUseCase
+import com.novikov.taxixml.domain.usecase.SetUserDataUseCase
 import com.novikov.taxixml.domain.usecase.SetUserPositionUseCase
 import dagger.Module
 import dagger.Provides
@@ -21,6 +24,16 @@ class DomainModule {
     @Provides
     fun provideSetUserPositionUseCase(userPositionRepository: UserPositionRepository): SetUserPositionUseCase {
         return SetUserPositionUseCase(userPositionRepository)
+    }
+
+    @Provides
+    fun provideSetUserDataUseCase(userDataRepository: UserDataRepository): SetUserDataUseCase{
+        return SetUserDataUseCase(userDataRepository)
+    }
+
+    @Provides
+    fun provideGetUserDataUseCase(userDataRepository: UserDataRepository): GetUserDataUseCase{
+        return GetUserDataUseCase(userDataRepository)
     }
 
 }

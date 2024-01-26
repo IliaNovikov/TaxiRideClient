@@ -2,29 +2,42 @@ package com.novikov.taxixml.presentation.view.activity
 
 import android.Manifest
 import android.Manifest.permission_group.SMS
+import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.telephony.SmsManager
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.novikov.taxixml.R
 import com.novikov.taxixml.databinding.ActivityMainBinding
+import com.novikov.taxixml.domain.model.Address
+import com.novikov.taxixml.domain.model.Card
+import com.novikov.taxixml.presentation.viewmodel.MainActivityViewModel
 import com.novikov.taxixml.singleton.NavigationController
 import com.novikov.taxixml.singleton.UserInfo
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private val vm: MainActivityViewModel by viewModels()
+
+    private lateinit var loadingDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,14 +48,41 @@ class MainActivity : AppCompatActivity() {
 
         NavigationController.navHost = navHostFragment.navController
 
-        if (FirebaseAuth.getInstance().currentUser != null && UserInfo.name.isNotEmpty()){
-            Log.i("firebaseUser", FirebaseAuth.getInstance().currentUser?.uid.toString())
-            NavigationController.navHost.navigate(R.id.mainFragment)
-            Toast.makeText(this, FirebaseAuth.getInstance().currentUser?.phoneNumber, Toast.LENGTH_LONG).show()
+        loadingDialog = AlertDialog.Builder(this, androidx.appcompat.R.style.ThemeOverlay_AppCompat_Dialog).apply {
+            setView(R.layout.dialog_loading)
+        }.create()
+
+        if (FirebaseAuth.getInstance().currentUser != null){
+            Log.i("main activity", "get data")
+            vm.uid.value = FirebaseAuth.getInstance().currentUser!!.uid
+            lifecycleScope.launch {
+                loadingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                loadingDialog.show()
+                vm.getUserData()
+            }.invokeOnCompletion {
+
+                UserInfo.name = vm.userData.name
+                UserInfo.phone = vm.userData.phone
+                UserInfo.uid = vm.userData.uid
+                UserInfo.cards = vm.userData.cards as ArrayList<Card>
+                UserInfo.savedAddresses = vm.userData.savedAddresses as ArrayList<Address>
+
+                Log.i("main activity", UserInfo.name)
+
+                loadingDialog.dismiss()
+
+                if (UserInfo.name.isNotEmpty()){
+                    Log.i("firebaseUser", FirebaseAuth.getInstance().currentUser?.uid.toString())
+                    NavigationController.navHost.navigate(R.id.mainFragment)
+                    Toast.makeText(this, FirebaseAuth.getInstance().currentUser?.phoneNumber, Toast.LENGTH_LONG).show()
+                }
+                else{
+                    NavigationController.navHost.navigate(R.id.authorizationViaPhoneFragment)
+                }
+            }
         }
-        else{
-            NavigationController.navHost.navigate(R.id.authorizationViaPhoneFragment)
-        }
+
+
 
         checkPermissions()
 

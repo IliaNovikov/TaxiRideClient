@@ -1,7 +1,9 @@
 package com.novikov.taxixml.di
 
 import android.content.Context
+import com.novikov.taxixml.data.UserDataRepositoryImpl
 import com.novikov.taxixml.data.UserPositionRepositoryImpl
+import com.novikov.taxixml.domain.repository.UserDataRepository
 import com.novikov.taxixml.domain.repository.UserPositionRepository
 import dagger.Module
 import dagger.Provides
@@ -18,6 +20,12 @@ class DataModule {
     @Singleton
     fun provideUserPositionRepository(@ApplicationContext context: Context): UserPositionRepository{
         return UserPositionRepositoryImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDataRepository(): UserDataRepository{
+        return  UserDataRepositoryImpl()
     }
 
 }

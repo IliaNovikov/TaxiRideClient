@@ -6,15 +6,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.novikov.taxixml.R
+import com.novikov.taxixml.databinding.FragmentAddCardBinding
+import com.novikov.taxixml.databinding.FragmentSettingsBinding
+import com.novikov.taxixml.singleton.NavigationController
 
 class AddCardFragment : Fragment() {
+
+    private lateinit var binding: FragmentAddCardBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_card, container, false)
+
+        binding = FragmentAddCardBinding.inflate(inflater)
+
+        binding.btnGoBack.setOnClickListener {
+            NavigationController.navHost.navigate(R.id.settingsFragment)
+        }
+
+
+
+        return binding.root
     }
 
 }

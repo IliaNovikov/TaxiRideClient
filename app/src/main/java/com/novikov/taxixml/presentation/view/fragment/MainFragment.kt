@@ -93,13 +93,16 @@ class MainFragment : Fragment() {
 
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        MapKitFactory.setApiKey("f2d2f815-7d2a-4e71-b3f1-0ca53df6df72")
+        MapKitFactory.initialize(requireContext())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        MapKitFactory.setApiKey("f2d2f815-7d2a-4e71-b3f1-0ca53df6df72")
-        MapKitFactory.initialize(requireContext())
 
         binding = FragmentMainBinding.inflate(inflater)
 
@@ -197,6 +200,10 @@ class MainFragment : Fragment() {
         binding.mvMain.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     private fun setUserLocationMark(){

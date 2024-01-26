@@ -7,6 +7,6 @@ object UserInfo {
     var uid = ""
     var name = ""
     var phone = ""
-    var cards =  ArrayList<Card>()
-    var savedAddresses = ArrayList<Address>()
+    var cards = arrayListOf<Card>()
+    var savedAddresses = arrayListOf<Address>()
 }

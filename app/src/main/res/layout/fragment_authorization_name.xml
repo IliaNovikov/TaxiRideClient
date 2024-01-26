@@ -28,6 +28,7 @@
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/etNameLayout"
                 style="@style/base_edittext_style"
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
@@ -40,7 +41,8 @@
                     android:id="@+id/etName"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:inputType="textPersonName"/>
+                    android:inputType="textPersonName"
+                    android:maxLength="20" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button

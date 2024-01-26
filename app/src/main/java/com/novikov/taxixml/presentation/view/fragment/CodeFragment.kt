@@ -91,15 +91,25 @@ class CodeFragment : Fragment() {
         }
 
         binding.btnSignIn.setOnClickListener {
-            val credential = PhoneAuthProvider.getCredential(codeId, binding.etCode.unMasked)
-            auth.signInWithCredential(credential).addOnCompleteListener {
-                if(it.isSuccessful){
-                    Toast.makeText(requireContext(), "Welcome", Toast.LENGTH_SHORT).show()
-                    NavigationController.navHost.navigate(R.id.authorizationNameFragment)
+            if(binding.etCode.unMasked.length == 6
+                && binding.etCode.unMasked.all { it.isDigit() }){
+                val credential = PhoneAuthProvider.getCredential(codeId, binding.etCode.unMasked)
+                auth.signInWithCredential(credential).addOnCompleteListener {
+                    if(it.isSuccessful){
+                        Toast.makeText(requireContext(), "Welcome", Toast.LENGTH_SHORT).show()
+                        NavigationController.navHost.navigate(R.id.authorizationNameFragment)
+                    }
+                    else
+                        Toast.makeText(requireContext(), it.exception.toString(), Toast.LENGTH_SHORT).show()
                 }
-                else
-                    Toast.makeText(requireContext(), it.exception.toString(), Toast.LENGTH_SHORT).show()
             }
+            else{
+                if(binding.etCode.unMasked.length != 6)
+                    binding.etCodeLayout.error = "Должно быть 6 цифр"
+                if(!binding.etCode.unMasked.all { it.isDigit() })
+                    binding.etCodeLayout.error = "Должны быть только цифры"
+            }
+
         }
 
         binding.btnReRequestCode.setOnClickListener {

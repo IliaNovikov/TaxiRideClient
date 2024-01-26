@@ -41,4 +41,5 @@
     <string name="whats_your_name">Как к вам можно обращаться?</string>
     <string name="continue_text">Продолжить</string>
     <string name="economy">Эконом</string>
+    <string name="save">Сохранить</string>
 </resources>
