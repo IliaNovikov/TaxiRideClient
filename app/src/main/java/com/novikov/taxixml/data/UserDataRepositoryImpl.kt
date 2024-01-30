@@ -1,20 +1,13 @@
 package com.novikov.taxixml.data
 
-import android.util.JsonWriter
 import android.util.Log
-import com.google.android.gms.common.util.JsonUtils
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.novikov.taxixml.domain.model.Address
 import com.novikov.taxixml.domain.model.Card
 import com.novikov.taxixml.domain.model.UserData
 import com.novikov.taxixml.domain.repository.UserDataRepository
 import kotlinx.coroutines.tasks.await
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.encodeToString
+import java.util.ArrayList
 
 class UserDataRepositoryImpl : UserDataRepository {
 
@@ -42,12 +35,20 @@ class UserDataRepositoryImpl : UserDataRepository {
 
             map["name"] = data.name
             map["phone"] = data.phone
-            map["cards"] = data.cards
-            map["savedAddresses"] = data.savedAddresses
 
             ref.setValue(map).addOnCompleteListener {
                 result = it.isSuccessful
             }.await()
+
+            val cardsPushedKey = dbRef.child("clients").child(data.uid).child("cards").push()
+            for (i in data.cards){
+                cardsPushedKey.setValue(i).await()
+            }
+
+            val addressesPushedKey = dbRef.child("clients").child(data.uid).child("addresses").push()
+            for (i in data.savedAddresses){
+                addressesPushedKey.setValue(i).await()
+            }
 
 //            dbRef.child("clients").child(data.uid).child("name").setValue(data.name).addOnCompleteListener {
 //                result = it.isSuccessful
@@ -78,7 +79,7 @@ class UserDataRepositoryImpl : UserDataRepository {
                 name = dbRef.child("clients").child(uid).child("name").get().await().value.toString(),
                 phone = dbRef.child("clients").child(uid).child("phone").get().await().value.toString(),
                 uid = uid,
-
+                cards = if(dbRef.child("clients").child(uid).child("cards").get().await().exists()) dbRef.child("clients").child(uid).child("cards").get().await().value as ArrayList<Card> else arrayListOf()
             )
 
             return userData

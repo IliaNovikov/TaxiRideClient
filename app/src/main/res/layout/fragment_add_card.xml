@@ -27,6 +27,7 @@
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCardNumber"
                 style="@style/base_edittext_style"
                 app:endIconMode="clear_text"
                 android:layout_width="350dp"
@@ -34,11 +35,15 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="72dp"
                 android:hint="@string/card_number">
+>
 
-                <com.google.android.material.textfield.TextInputEditText
+                <com.santalu.maskara.widget.MaskEditText
                     android:id="@+id/etCardNumber"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    app:mask="#### #### #### ####"
+                    android:inputType="number"
+                    android:maxLength="19"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
@@ -49,29 +54,37 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilCardMonthYear"
                     android:layout_width="150dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:hint="@string/month_year"
                     app:endIconMode="clear_text">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <com.santalu.maskara.widget.MaskEditText
                         android:id="@+id/etCardMonthYear"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        app:mask="##/##"
+                        android:inputType="number"
+                        android:maxLength="5"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilCardCVC"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:hint="@string/cvc"
                     app:endIconMode="clear_text">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <com.santalu.maskara.widget.MaskEditText
                         android:id="@+id/etCardCVC"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        app:mask="###"
+                        android:inputType="number"
+                        android:maxLength="3"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 

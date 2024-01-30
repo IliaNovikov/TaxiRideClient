@@ -6,6 +6,8 @@ plugins {
     id("com.google.gms.google-services")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+
+
 }
 
 apply(plugin = "com.google.dagger.hilt.android")
@@ -61,14 +63,16 @@ dependencies {
     kapt ("com.google.dagger:hilt-compiler:2.47")
 
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-    implementation("com.google.firebase:firebase-database:20.3.0")
-    implementation("com.google.firebase:firebase-auth:22.3.0")
-    implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-storage")
 
     implementation ("com.github.santalu:maskara:1.0.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation ("com.google.code.gson:gson:2.10.1")
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

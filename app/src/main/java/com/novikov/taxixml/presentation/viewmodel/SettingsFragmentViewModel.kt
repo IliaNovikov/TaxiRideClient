@@ -18,8 +18,9 @@ class SettingsFragmentViewModel @Inject constructor( private val getUserDataUseC
 
 
     suspend fun getUserData(){
-        name.value = UserInfo.name
-        phone.value = UserInfo.phone
+        val userData = getUserDataUseCase.execute(UserInfo.uid)
+        name.value = userData.name
+        phone.value = userData.phone
     }
 
 }

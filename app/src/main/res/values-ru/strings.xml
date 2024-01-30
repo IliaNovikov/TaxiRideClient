@@ -42,4 +42,8 @@
     <string name="continue_text">Продолжить</string>
     <string name="economy">Эконом</string>
     <string name="save">Сохранить</string>
+    <string name="less_than_4_digits">Меньше 4 цифр</string>
+    <string name="less_than_16_digits">Меньше 16 цифр</string>
+    <string name="less_than_3_digits">Меньше 3 цифр</string>
+    <string name="incorrect_date">Некорректная дата</string>
 </resources>

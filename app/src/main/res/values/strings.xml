@@ -45,4 +45,8 @@
     <string name="continue_text">Continue</string>
     <string name="economy">Economy</string>
     <string name="save">Save</string>
+    <string name="less_than_16_digits">Less than 16 digits</string>
+    <string name="less_than_4_digits">Less than 4 digits</string>
+    <string name="less_than_3_digits">Less than 3 digits</string>
+    <string name="incorrect_date">Incorrect date</string>
 </resources>

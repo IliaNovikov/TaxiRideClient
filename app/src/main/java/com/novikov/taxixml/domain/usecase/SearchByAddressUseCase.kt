@@ -43,7 +43,7 @@ class SearchByAddressUseCase() {
 
         val session = searchManager.submit(searchString, VisibleRegionUtils.toPolygon(map.visibleRegion), searchOptions, searchSessionListener)
 
-        delay(2000)
+        delay(1000)
 
         return geoObjects
     }

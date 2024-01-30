@@ -25,6 +25,7 @@
                 style="@style/main_title_style" />
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCity"
                 style="@style/base_edittext_style"
                 app:endIconMode="clear_text"
                 android:layout_width="350dp"
@@ -40,6 +41,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilStreet"
                 style="@style/base_edittext_style"
                 app:endIconMode="clear_text"
                 android:layout_width="350dp"
@@ -55,6 +57,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilHouse"
                 app:endIconMode="clear_text"
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"

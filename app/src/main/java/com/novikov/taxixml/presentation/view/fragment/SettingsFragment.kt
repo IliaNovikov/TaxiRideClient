@@ -1,5 +1,8 @@
 package com.novikov.taxixml.presentation.view.fragment
 
+import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,6 +20,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
 
+    private lateinit var loadingDialog: AlertDialog
     private lateinit var binding: FragmentSettingsBinding
     private val viewModel: SettingsFragmentViewModel by viewModels()
 
@@ -28,9 +32,16 @@ class SettingsFragment : Fragment() {
 
         binding = FragmentSettingsBinding.inflate(inflater)
 
+        loadingDialog = AlertDialog.Builder(requireContext(), androidx.appcompat.R.style.ThemeOverlay_AppCompat_Dialog).apply {
+            setView(R.layout.dialog_loading)
+        }.create()
+        loadingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         lifecycleScope.launch {
+            loadingDialog.show()
             viewModel.getUserData()
         }.invokeOnCompletion {
+            loadingDialog.dismiss()
             binding.etName.setText(viewModel.name.value.toString())
             binding.etPhoneNumber.setText(viewModel.phone.value.toString())
         }
