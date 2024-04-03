@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map_nav_graph"
+    app:startDestination="@id/geoInfoFragment">
+
+    <fragment
+        android:id="@+id/geoInfoFragment"
+        android:name="com.novikov.taxixml.presentation.view.fragment.GeoInfoFragment"
+        android:label="fragment_geo_info"
+        tools:layout="@layout/fragment_geo_info" />
+</navigation>

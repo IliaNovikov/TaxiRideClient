@@ -11,9 +11,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.novikov.taxixml.R
+import com.novikov.taxixml.adapters.SavedAddressAdapter
 import com.novikov.taxixml.databinding.FragmentSettingsBinding
 import com.novikov.taxixml.presentation.viewmodel.SettingsFragmentViewModel
 import com.novikov.taxixml.singleton.NavigationController
+import com.novikov.taxixml.singleton.UserInfo
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -49,6 +51,12 @@ class SettingsFragment : Fragment() {
         binding.addNewCardBlock.setOnClickListener {
             NavigationController.navHost.navigate(R.id.action_settingsFragment_to_addCardFragment)
         }
+
+        binding.addNewAddressBlock.setOnClickListener {
+            NavigationController.navHost.navigate(R.id.action_settingsFragment_to_addAddressFragment)
+        }
+
+        binding.rvSavedAddresses.adapter = SavedAddressAdapter(requireContext(), UserInfo.savedAddresses)
 
         return binding.root
     }

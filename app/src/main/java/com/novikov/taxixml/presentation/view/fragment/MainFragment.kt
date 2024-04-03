@@ -8,8 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import com.novikov.taxixml.R
 import com.novikov.taxixml.databinding.FragmentMainBinding
 import com.novikov.taxixml.presentation.viewmodel.MainFragmentViewModel
@@ -82,6 +85,13 @@ class MainFragment : Fragment() {
                 setPin(
                     viewModel.geoObject.geometry[0].point!!,
                     viewModel.geoObject.metadataContainer.getItem(ToponymObjectMetadata::class.java).address.formattedAddress)
+
+                try{
+                    NavigationController.subNavHost.navigate(R.id.geoInfoFragment, bundleOf("address" to viewModel.geoObject.metadataContainer.getItem(ToponymObjectMetadata::class.java).address.formattedAddress))
+                }
+                catch (e: Exception){
+                    Log.e("main fragment", e.message.toString())
+                }
             }
             return true
         }
@@ -152,37 +162,37 @@ class MainFragment : Fragment() {
             }
         }
 
-        //Слушатель нажатия на иконку поиска
-        binding.etSearchLayout.setStartIconOnClickListener {
-            if(binding.etSearch.text.toString().isNotEmpty()){
-                Toast.makeText(requireContext(), "wait", Toast.LENGTH_SHORT).show()
-                viewModel.searchString.value = binding.etSearch.text.toString()
-                lifecycleScope.launch {
-                    viewModel.getSearchResults(map)
-                }.invokeOnCompletion {
-                    Log.i("viewgo", viewModel.geoObjects.size.toString())
-                    Toast.makeText(requireContext(), viewModel.geoObjects.size.toString(), Toast.LENGTH_LONG).show()
-                }
-            }
-            else
-                Toast.makeText(requireContext(), "empty", Toast.LENGTH_SHORT).show()
-        }
-
-        //Слушатель нажатия на кнопку btnAddressMark
-        binding.btnAddressMark.setOnClickListener {
-            val screenPoint = ScreenPoint((mapWindow.width()/2f), (mapWindow.height()/2f))
-
-            val worldPoint = mapWindow.screenToWorld(screenPoint)
-
-            val centerPlacemark = map.mapObjects.addPlacemark(worldPoint!!)
-
-            centerPlacemark.setIcon(ImageProvider.fromResource(requireContext(), R.drawable.map_point_icon))
-        }
+//        //Слушатель нажатия на иконку поиска
+////        binding.etSearchLayout.setStartIconOnClickListener {
+////            if(binding.etSearch.text.toString().isNotEmpty()){
+////                Toast.makeText(requireContext(), "wait", Toast.LENGTH_SHORT).show()
+////                viewModel.searchString.value = binding.etSearch.text.toString()
+////                lifecycleScope.launch {
+////                    viewModel.getSearchResults(map)
+////                }.invokeOnCompletion {
+////                    Log.i("viewgo", viewModel.geoObjects.size.toString())
+////                    Toast.makeText(requireContext(), viewModel.geoObjects.size.toString(), Toast.LENGTH_LONG).show()
+////                }
+////            }
+////            else
+////                Toast.makeText(requireContext(), "empty", Toast.LENGTH_SHORT).show()
+////        }
+////
+////        //Слушатель нажатия на кнопку btnAddressMark
+////        binding.btnAddressMark.setOnClickListener {
+////            val screenPoint = ScreenPoint((mapWindow.width()/2f), (mapWindow.height()/2f))
+////
+////            val worldPoint = mapWindow.screenToWorld(screenPoint)
+////
+////            val centerPlacemark = map.mapObjects.addPlacemark(worldPoint!!)
+////
+////            centerPlacemark.setIcon(ImageProvider.fromResource(requireContext(), R.drawable.map_point_icon))
+////        }
 
         //Слушатель нажатия на кнопку btnSettings
-        binding.btnSettings.setOnClickListener {
-            NavigationController.navHost.navigate(R.id.action_mainFragment_to_settingsFragment)
-        }
+//        binding.btnSettings.setOnClickListener {
+//            NavigationController.navHost.navigate(R.id.action_mainFragment_to_settingsFragment)
+//        }
 
         map.addTapListener(geoObjectTapListener)
 

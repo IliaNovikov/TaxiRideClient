@@ -174,12 +174,14 @@
                 android:text="@string/saved_addresses" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSavedAddresses"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:itemCount="2"
-                android:layout_marginVertical="12dp"/>
+                android:layout_marginVertical="12dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
             <LinearLayout
+                android:id="@+id/addNewAddressBlock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -193,8 +195,8 @@
                     android:layout_width="220dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="32dp"
-                    android:text="@string/add_new_card" />
+                    android:layout_marginStart="32dp"
+                    android:text="@string/add_new_address" />
 
             </LinearLayout>
             <Button
@@ -202,6 +204,7 @@
                 android:layout_height="wrap_content"
                 style="@style/main_button_style"
                 android:layout_marginTop="16dp"
+                app:cornerRadius="10dp"
                 android:text="@string/save"/>
         </LinearLayout>
     </ScrollView>

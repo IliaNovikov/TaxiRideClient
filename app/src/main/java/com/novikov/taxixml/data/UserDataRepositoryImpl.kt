@@ -3,6 +3,7 @@ package com.novikov.taxixml.data
 import android.util.Log
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.novikov.taxixml.domain.model.Address
 import com.novikov.taxixml.domain.model.Card
 import com.novikov.taxixml.domain.model.UserData
 import com.novikov.taxixml.domain.repository.UserDataRepository
@@ -40,15 +41,14 @@ class UserDataRepositoryImpl : UserDataRepository {
                 result = it.isSuccessful
             }.await()
 
-            val cardsPushedKey = dbRef.child("clients").child(data.uid).child("cards").push()
-            for (i in data.cards){
-                cardsPushedKey.setValue(i).await()
-            }
+            val cardsPushedKey = dbRef.child("clients").child(data.uid).child("cards")
+//            for (i in data.cards){
+//                cardsPushedKey.setValue(i).await()
+//            }
+            cardsPushedKey.setValue(data.cards)
 
-            val addressesPushedKey = dbRef.child("clients").child(data.uid).child("addresses").push()
-            for (i in data.savedAddresses){
-                addressesPushedKey.setValue(i).await()
-            }
+            val addressesPushedKey = dbRef.child("clients").child(data.uid).child("addresses")
+            addressesPushedKey.setValue(data.savedAddresses)
 
 //            dbRef.child("clients").child(data.uid).child("name").setValue(data.name).addOnCompleteListener {
 //                result = it.isSuccessful
@@ -64,6 +64,10 @@ class UserDataRepositoryImpl : UserDataRepository {
     }
 
     override suspend fun getData(uid: String): UserData {
+
+        val cardsList = ArrayList<Card>()
+        val addressesList = ArrayList<Address>()
+
         Log.i("user repo get", "start")
 
         try {
@@ -75,11 +79,31 @@ class UserDataRepositoryImpl : UserDataRepository {
 //
 //            Log.i("user repo get name", userData.name)
 
+            for(item in dbRef.child("clients").child(uid).child("cards").get().await().children){
+                val card = Card(number = item.child("number").value.toString(),
+                    month = item.child("month").value.toString().toInt(),
+                    year = item.child("year").value.toString().toInt(),
+                    cvc = item.child("cvc").value.toString().toInt())
+                cardsList.add(card)
+                Log.i("uc 1 card", (item.child("number").value.toString()))
+            }
+
+            for(item in dbRef.child("clients").child(uid).child("addresses").get().await().children){
+                val address = Address(city = item.child("city").value.toString(),
+                    street = item.child("street").value.toString(),
+                    house = item.child("house").value.toString())
+                addressesList.add(address)
+                Log.i("uc 1 address", (item.child("number").value.toString()))
+            }
+
+            Log.i("uc cards", dbRef.child("clients").child(uid).child("cards").get().await().value.toString())
+
             val userData = UserData(
                 name = dbRef.child("clients").child(uid).child("name").get().await().value.toString(),
                 phone = dbRef.child("clients").child(uid).child("phone").get().await().value.toString(),
                 uid = uid,
-                cards = if(dbRef.child("clients").child(uid).child("cards").get().await().exists()) dbRef.child("clients").child(uid).child("cards").get().await().value as ArrayList<Card> else arrayListOf()
+                cards = cardsList,
+                savedAddresses = addressesList
             )
 
             return userData

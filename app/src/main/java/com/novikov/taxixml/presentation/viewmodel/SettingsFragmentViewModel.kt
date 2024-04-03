@@ -16,7 +16,6 @@ class SettingsFragmentViewModel @Inject constructor( private val getUserDataUseC
     var name = MutableLiveData<String>("")
     var phone = MutableLiveData<String>("")
 
-
     suspend fun getUserData(){
         val userData = getUserDataUseCase.execute(UserInfo.uid)
         name.value = userData.name

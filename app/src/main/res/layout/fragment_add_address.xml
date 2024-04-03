@@ -37,7 +37,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etCity"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -53,7 +54,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etStreet"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -68,7 +70,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etHouse"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:inputType="number"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
@@ -85,8 +88,6 @@
                 android:id="@+id/btnGoBack"
                 style="@style/bordered_button_style"
                 app:cornerRadius="10dp"
-                app:strokeColor="@color/accentColor"
-                app:strokeWidth="2dp"
                 android:layout_width="350dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center"

@@ -46,4 +46,11 @@
     <string name="less_than_16_digits">Меньше 16 цифр</string>
     <string name="less_than_3_digits">Меньше 3 цифр</string>
     <string name="incorrect_date">Некорректная дата</string>
+    <string name="required">Обязательное поле</string>
+    <string name="order_here">Заказать сюда</string>
+    <string name="order_here_for_another_person">Заказать сюда для другого человека</string>
+    <string name="order_from_here">Заказать отсюда</string>
+    <string name="select_a_point">Выбрать точку</string>
+    <string name="start_address">Стартовый адрес</string>
+    <string name="final_address">Конечный адрес</string>
 </resources>

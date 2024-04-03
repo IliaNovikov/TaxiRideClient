@@ -42,7 +42,7 @@ class AuthorizationNameFragment : Fragment() {
                     lifecycleScope.launch {
                         viewModel.setUserData()
                     }.invokeOnCompletion {
-                        NavigationController.navHost.navigate(R.id.mainFragment)
+                        NavigationController.navHost.navigate(R.id.orderTaxiFragment)
                     }
                 }
                 catch (e: Exception){

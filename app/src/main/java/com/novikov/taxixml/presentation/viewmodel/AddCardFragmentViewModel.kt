@@ -48,7 +48,7 @@ class AddCardFragmentViewModel @Inject constructor(private val setUserDataUseCas
         }
         else{
             if (cardMonthYear.value!!.substring(0, 2).toInt() > 12
-                || ("20" + cardMonthYear.value!!.substring(2, 2)).toInt() > LocalDateTime.now().year){
+                || ("20" + cardMonthYear.value!!.substring(2, 4)).toInt() < LocalDateTime.now().year){
                 cardMonthYearError.value = app.getString(R.string.incorrect_date)
                 cardMonthYearErrorEnabled.value = true
             }

@@ -15,6 +15,7 @@
         <item name="android:fontFamily">@font/inter_semibold</item>
         <item name="android:textColor">@color/secondaryColor</item>
         <item name="android:textStyle">bold</item>
+        <item name="background">@drawable/main_button_background</item>
     </style>
 
     <style name="bordered_button_style">
@@ -24,6 +25,8 @@
         <item name="android:textColor">@color/accentColor</item>
         <item name="android:textStyle">bold</item>
         <item name="cornerRadius">10dp</item>
+        <item name="strokeColor">@color/accentColor</item>
+        <item name="strokeWidth">2dp</item>
     </style>
 
     <style name="main_title_style">
@@ -34,9 +37,9 @@
 
     <style name="main_rounded_button_style">
         <item name="android:background">@drawable/circle_button_background</item>
-        <item name="android:backgroundTint">@color/primaryColor</item>
+        <item name="android:backgroundTint">@color/accentColor</item>
         <item name="android:padding">12dp</item>
-        <item name="android:tint">@color/accentColor</item>
+        <item name="android:tint">@color/primaryColor</item>
     </style>
 
     <style name="main_text_style">

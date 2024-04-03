@@ -77,7 +77,7 @@ class CodeFragment : Fragment() {
                 auth.signInWithCredential(p0).addOnCompleteListener {
                     if (it.isSuccessful) {
                         Toast.makeText(requireContext(), "Welcome", Toast.LENGTH_SHORT).show()
-                        NavigationController.navHost.navigate(R.id.mainFragment)
+                        NavigationController.navHost.navigate(R.id.orderTaxiFragment)
                     } else
                         Toast.makeText(requireContext(), it.exception.toString(), Toast.LENGTH_LONG)
                             .show()

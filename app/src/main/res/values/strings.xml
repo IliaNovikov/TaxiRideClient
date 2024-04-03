@@ -49,4 +49,11 @@
     <string name="less_than_4_digits">Less than 4 digits</string>
     <string name="less_than_3_digits">Less than 3 digits</string>
     <string name="incorrect_date">Incorrect date</string>
+    <string name="required">Required</string>
+    <string name="order_here">Order here</string>
+    <string name="order_here_for_another_person">Order here for another person</string>
+    <string name="order_from_here">Order from here</string>
+    <string name="select_a_point">Select a point</string>
+    <string name="start_address">Start address</string>
+    <string name="final_address">Final address</string>
 </resources>
