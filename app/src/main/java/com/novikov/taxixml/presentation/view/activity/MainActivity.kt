@@ -27,6 +27,7 @@ import com.novikov.taxixml.domain.model.Card
 import com.novikov.taxixml.presentation.viewmodel.MainActivityViewModel
 import com.novikov.taxixml.singleton.NavigationController
 import com.novikov.taxixml.singleton.UserInfo
+import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -43,6 +44,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+        MapKitFactory.setApiKey("f2d2f815-7d2a-4e71-b3f1-0ca53df6df72")
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
 

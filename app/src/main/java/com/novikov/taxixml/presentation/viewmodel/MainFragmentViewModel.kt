@@ -1,41 +1,36 @@
 package com.novikov.taxixml.presentation.viewmodel
 
 import android.app.Application
-import android.os.Handler
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.novikov.taxixml.R
 import com.novikov.taxixml.domain.model.Position
 import com.novikov.taxixml.domain.usecase.GetUserPositionUseCase
 import com.novikov.taxixml.domain.usecase.SearchByAddressUseCase
 import com.novikov.taxixml.domain.usecase.SearchByPointUseCase
 import com.novikov.taxixml.domain.usecase.SetUserPositionUseCase
-import com.yandex.mapkit.BaseMetadata
 import com.yandex.mapkit.GeoObject
 import com.yandex.mapkit.GeoObjectCollection
-import com.yandex.mapkit.geometry.Geometry
+import com.yandex.mapkit.RequestPoint
+import com.yandex.mapkit.RequestPointType
+import com.yandex.mapkit.directions.DirectionsFactory
+import com.yandex.mapkit.directions.driving.DrivingOptions
+import com.yandex.mapkit.directions.driving.DrivingRoute
+import com.yandex.mapkit.directions.driving.DrivingSession.DrivingRouteListener
+import com.yandex.mapkit.directions.driving.VehicleOptions
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.TextStyle
-import com.yandex.mapkit.map.VisibleRegionUtils
 import com.yandex.mapkit.search.BusinessObjectMetadata
-import com.yandex.mapkit.search.Response
-import com.yandex.mapkit.search.SearchFactory
-import com.yandex.mapkit.search.SearchManager
-import com.yandex.mapkit.search.SearchManagerType
-import com.yandex.mapkit.search.SearchOptions
-import com.yandex.mapkit.search.SearchType
-import com.yandex.mapkit.search.Session
 import com.yandex.mapkit.search.ToponymObjectMetadata
-import com.yandex.mapkit.search.search_layer.SearchLayer
 import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.util.concurrent.CountDownLatch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,6 +44,9 @@ class MainFragmentViewModel @Inject constructor(
     var searchString:MutableLiveData<String> = MutableLiveData()
     var geoObjects: List<GeoObjectCollection.Item> = ArrayList()
     var geoObject: GeoObject = GeoObject()
+    val mldGeoObject = MutableLiveData<GeoObject>()
+    val mldRoutePolyline = MutableLiveData<Polyline>()
+
 
     private val searchByAddressUseCase = SearchByAddressUseCase()
     private val searchByPointUseCase = SearchByPointUseCase()
@@ -156,6 +154,39 @@ class MainFragmentViewModel @Inject constructor(
 //
 //    }
 
+    suspend fun getRouteByPoints(startPoint: Point, endPoint: Point){
+
+        val countDownLatch = CountDownLatch(1)
+
+        val drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
+        val drivingOptions = DrivingOptions().apply {
+            routesCount = 1
+        }
+        val points = listOf(RequestPoint(startPoint, RequestPointType.WAYPOINT, null, null),
+            RequestPoint(endPoint, RequestPointType.WAYPOINT, null, null))
+        val vehicleOptions = VehicleOptions()
+        val drivingSession = drivingRouter.requestRoutes(
+            points,
+            drivingOptions,
+            vehicleOptions,
+            object : DrivingRouteListener{
+                override fun onDrivingRoutes(p0: MutableList<DrivingRoute>) {
+                    Log.i("route", p0[0].geometry.points.size.toString())
+                    mldRoutePolyline.value = p0[0].geometry
+                    countDownLatch.countDown()
+                }
+
+                override fun onDrivingRoutesError(p0: Error) {
+                    countDownLatch.countDown()
+                }
+
+            }
+        )
+        withContext(Dispatchers.IO) {
+            countDownLatch.await()
+        }
+    }
+
     suspend fun getPointSearchResult(point: Point, map: Map){
         val resultGeoObject = searchByPointUseCase.execute(point, map)
         try {
@@ -165,6 +196,7 @@ class MainFragmentViewModel @Inject constructor(
             Log.e("vmpointe", resultGeoObject.obj?.metadataContainer!!.getItem(ToponymObjectMetadata::class.java).address.formattedAddress)
         }
         geoObject = resultGeoObject.obj!!
+        mldGeoObject.value = geoObject
     }
 
 }

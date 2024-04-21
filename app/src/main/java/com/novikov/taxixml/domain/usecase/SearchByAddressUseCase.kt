@@ -17,7 +17,7 @@ import com.yandex.runtime.Error
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 
-class SearchByAddressUseCase() {
+class SearchByAddressUseCase {
 
     suspend fun execute(searchString: String, map: Map): List<GeoObjectCollection.Item>{
 

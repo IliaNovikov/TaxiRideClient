@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -17,9 +18,11 @@ import com.novikov.taxixml.R
 import com.novikov.taxixml.databinding.FragmentMainBinding
 import com.novikov.taxixml.presentation.viewmodel.MainFragmentViewModel
 import com.novikov.taxixml.singleton.NavigationController
+import com.novikov.taxixml.singleton.UserInfo
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.ScreenPoint
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.layers.GeoObjectTapEvent
 import com.yandex.mapkit.layers.GeoObjectTapListener
 import com.yandex.mapkit.logo.Alignment
@@ -85,13 +88,6 @@ class MainFragment : Fragment() {
                 setPin(
                     viewModel.geoObject.geometry[0].point!!,
                     viewModel.geoObject.metadataContainer.getItem(ToponymObjectMetadata::class.java).address.formattedAddress)
-
-                try{
-                    NavigationController.subNavHost.navigate(R.id.geoInfoFragment, bundleOf("address" to viewModel.geoObject.metadataContainer.getItem(ToponymObjectMetadata::class.java).address.formattedAddress))
-                }
-                catch (e: Exception){
-                    Log.e("main fragment", e.message.toString())
-                }
             }
             return true
         }
@@ -105,7 +101,6 @@ class MainFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MapKitFactory.setApiKey("f2d2f815-7d2a-4e71-b3f1-0ca53df6df72")
         MapKitFactory.initialize(requireContext())
     }
 
@@ -124,6 +119,9 @@ class MainFragment : Fragment() {
 
         map = binding.mvMain.map
         mapWindow = binding.mvMain.mapWindow
+
+        binding.btnSelectAPoint.isEnabled = false
+        binding.btnSelectAPoint.alpha = 0.5f
 
         map.logo.setAlignment(Alignment(HorizontalAlignment.RIGHT, VerticalAlignment.TOP))
 
@@ -162,37 +160,43 @@ class MainFragment : Fragment() {
             }
         }
 
-//        //Слушатель нажатия на иконку поиска
-////        binding.etSearchLayout.setStartIconOnClickListener {
-////            if(binding.etSearch.text.toString().isNotEmpty()){
-////                Toast.makeText(requireContext(), "wait", Toast.LENGTH_SHORT).show()
-////                viewModel.searchString.value = binding.etSearch.text.toString()
-////                lifecycleScope.launch {
-////                    viewModel.getSearchResults(map)
-////                }.invokeOnCompletion {
-////                    Log.i("viewgo", viewModel.geoObjects.size.toString())
-////                    Toast.makeText(requireContext(), viewModel.geoObjects.size.toString(), Toast.LENGTH_LONG).show()
-////                }
-////            }
-////            else
-////                Toast.makeText(requireContext(), "empty", Toast.LENGTH_SHORT).show()
-////        }
-////
-////        //Слушатель нажатия на кнопку btnAddressMark
-////        binding.btnAddressMark.setOnClickListener {
-////            val screenPoint = ScreenPoint((mapWindow.width()/2f), (mapWindow.height()/2f))
-////
-////            val worldPoint = mapWindow.screenToWorld(screenPoint)
-////
-////            val centerPlacemark = map.mapObjects.addPlacemark(worldPoint!!)
-////
-////            centerPlacemark.setIcon(ImageProvider.fromResource(requireContext(), R.drawable.map_point_icon))
-////        }
+        binding.btnPlusScale.setOnClickListener {
+            map.move(CameraPosition(
+                map.cameraPosition.target,
+                map.cameraPosition.zoom + 1f,
+                map.cameraPosition.azimuth,
+                map.cameraPosition.tilt))
+            Log.i("zoom", map.cameraPosition.zoom.toString())
+        }
 
-        //Слушатель нажатия на кнопку btnSettings
-//        binding.btnSettings.setOnClickListener {
-//            NavigationController.navHost.navigate(R.id.action_mainFragment_to_settingsFragment)
-//        }
+        binding.btnMinusScale.setOnClickListener {
+            map.move(CameraPosition(
+                map.cameraPosition.target,
+                map.cameraPosition.zoom - 1f,
+                map.cameraPosition.azimuth,
+                map.cameraPosition.tilt))
+            Log.i("zoom", map.cameraPosition.zoom.toString())
+        }
+
+        viewModel.mldGeoObject.observe(requireActivity(), Observer {
+            if (it.name.isNullOrEmpty()){
+                binding.btnSelectAPoint.isEnabled = false
+                binding.btnSelectAPoint.alpha = 0.5f
+            }
+            else{
+                binding.btnSelectAPoint.isEnabled = true
+                binding.btnSelectAPoint.alpha = 1f
+            }
+//            Log.i("test", "observer")
+        })
+
+        binding.btnGoBack.setOnClickListener {
+            NavigationController.navHost.popBackStack(R.id.orderTaxiFragment, false)
+        }
+
+        binding.btnSelectAPoint.setOnClickListener {
+            Toast.makeText(requireContext(), "click", Toast.LENGTH_SHORT).show()
+        }
 
         map.addTapListener(geoObjectTapListener)
 
@@ -207,8 +211,8 @@ class MainFragment : Fragment() {
     }
 
     override fun onStop() {
-        binding.mvMain.onStop()
         MapKitFactory.getInstance().onStop()
+        binding.mvMain.onStop()
         super.onStop()
     }
 
@@ -246,6 +250,12 @@ class MainFragment : Fragment() {
                 offset = -2f
                 placement = TextStyle.Placement.BOTTOM
             }
-            )
+        )
+        lifecycleScope.launch {
+            viewModel.getRouteByPoints(pinPlacemark.geometry, Point(viewModel.position.value?.latitude!!,viewModel.position.value!!.longitude))
+        }.invokeOnCompletion {
+            Log.i("viewModel", viewModel.mldRoutePolyline.value.toString())
+            map.mapObjects.addPolyline(Polyline(viewModel.mldRoutePolyline.value!!.points))
+        }
     }
 }

@@ -14,7 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class AddAddressFragmentViewModel @Inject constructor(private val setUserDataUseCase: SetUserDataUseCase,
+    class AddAddressFragmentViewModel @Inject constructor(private val setUserDataUseCase: SetUserDataUseCase,
                                                       private val app: Application) : AndroidViewModel(app) {
 
     val city = MutableLiveData("")

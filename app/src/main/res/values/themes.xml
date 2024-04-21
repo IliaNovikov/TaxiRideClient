@@ -15,6 +15,7 @@
     <color name="mainTextColor">#0A0A0A</color>
     <color name="subTextColor">#535353</color>
     <color name="errorColor">#D33D3D</color>
+    <color name="accentColorNotEnabled">#222222</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#111111</color>
 
 </resources>

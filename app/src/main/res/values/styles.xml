@@ -10,12 +10,15 @@
 
     </style>
 
-    <style name="main_button_style" parent="Widget.Material3.Button">
+
+
+    <style name="main_button_style">
         <item name="backgroundTint">@color/accentColor</item>
         <item name="android:fontFamily">@font/inter_semibold</item>
         <item name="android:textColor">@color/secondaryColor</item>
         <item name="android:textStyle">bold</item>
         <item name="background">@drawable/main_button_background</item>
+        <item name="cornerRadius">10dp</item>
     </style>
 
     <style name="bordered_button_style">

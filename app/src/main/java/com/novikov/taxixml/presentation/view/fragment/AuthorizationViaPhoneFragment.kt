@@ -54,7 +54,8 @@ class AuthorizationViaPhoneFragment : Fragment() {
                 auth.signInWithCredential(p0).addOnCompleteListener {
                     if (it.isSuccessful){
                         Toast.makeText(requireContext(), "Welcome", Toast.LENGTH_SHORT).show()
-                        NavigationController.navHost.navigate(R.id.mainFragment)
+//                        NavigationController.navHost.navigate(R.id.mainFragment)
+                        NavigationController.navHost.popBackStack(R.id.orderTaxiFragment, true)
                     }
                     else
                         Toast.makeText(requireContext(), it.exception.toString(), Toast.LENGTH_LONG).show()
@@ -80,11 +81,12 @@ class AuthorizationViaPhoneFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.btnRequestCode.setOnClickListener {
-            loadingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            loadingDialog.show()
             if(binding.etPhoneNumber.unMasked.length == 10
-                && binding.etPhoneNumber.unMasked.all { it.isDigit() })
+                && binding.etPhoneNumber.unMasked.all { it.isDigit() }){
+                loadingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                loadingDialog.show()
                 authUser()
+            }
             else{
                 if(binding.etPhoneNumber.unMasked.length < 10)
                     binding.etPhoneNumberLayout.error = "Мало цифр"

@@ -14,10 +14,8 @@ import com.novikov.taxixml.domain.model.Address
 
 class SavedAddressAdapter(val context: Context, val savedAddresses: List<Address>): RecyclerView.Adapter<SavedAddressAdapter.ViewHolder>() {
 
-    class ViewHolder(itemView: View,
-                     private val tvAddress: TextView? = itemView.findViewById(R.id.tvAddress)
-    ) : RecyclerView.ViewHolder(itemView) {
-    }
+    class ViewHolder(itemView: View, private val tvAddress: TextView? = itemView.findViewById(R.id.tvAddress))
+        : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
        val view = LayoutInflater.from(context).inflate(R.layout.rv_saved_addresses_item, parent, false)
