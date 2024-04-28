@@ -1,6 +1,5 @@
 package com.novikov.taxixml.presentation.view.fragment
 
-import android.graphics.PointF
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.core.view.get
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -17,25 +16,18 @@ import androidx.lifecycle.lifecycleScope
 import com.novikov.taxixml.R
 import com.novikov.taxixml.databinding.FragmentMapBinding
 import com.novikov.taxixml.presentation.view.dialog.TariffDialog
-import com.novikov.taxixml.presentation.viewmodel.MainFragmentViewModel
 import com.novikov.taxixml.presentation.viewmodel.MapFragmentViewModel
-import com.novikov.taxixml.presentation.viewmodel.OrderTaxiFragmentViewModel
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.ScreenPoint
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.geometry.Polyline
-import com.yandex.mapkit.layers.ObjectEvent
-import com.yandex.mapkit.location.LocationViewSource
+import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.CameraUpdateReason
 import com.yandex.mapkit.map.Map
-import com.yandex.mapkit.map.MapObject
-import com.yandex.mapkit.map.MapObjectCollectionListener
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.map.TextStyle
-import com.yandex.mapkit.search.ToponymObjectMetadata
-import com.yandex.mapkit.user_location.UserLocationObjectListener
-import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -50,6 +42,30 @@ class MapFragment : Fragment() {
     private lateinit var endPlacemark: PlacemarkMapObject
     private lateinit var map: Map
     private lateinit var mapKitInstance: MapKit
+    private val cameraStartListener = object : CameraListener{
+        override fun onCameraPositionChanged(
+            p0: Map,
+            p1: CameraPosition,
+            p2: CameraUpdateReason,
+            p3: Boolean
+        ) {
+            startPlacemark.isVisible = true
+            startPlacemark.geometry = p1.target
+        }
+    }
+
+    private val cameraEndListener = object : CameraListener{
+        override fun onCameraPositionChanged(
+            p0: Map,
+            p1: CameraPosition,
+            p2: CameraUpdateReason,
+            p3: Boolean
+        ) {
+            endPlacemark.isVisible = true
+            endPlacemark.geometry = p1.target
+        }
+
+    }
 
     private lateinit var tariffDialog: TariffDialog
 
@@ -69,6 +85,7 @@ class MapFragment : Fragment() {
         userLocation.isVisible = true
 
         map = binding.mvMain.map
+
         tariffDialog = TariffDialog()
 
         return binding.root
@@ -79,6 +96,11 @@ class MapFragment : Fragment() {
 
         startPlacemark = binding.mvMain.map.mapObjects.addPlacemark(viewModel.mldStartPoint.value!!)
         endPlacemark = binding.mvMain.map.mapObjects.addPlacemark(viewModel.mldEndPoint.value!!)
+        startPlacemark.isVisible = false
+        endPlacemark.isVisible = false
+
+        binding.btnSelectPoint.isVisible = false
+        binding.btnSelectEndPoint.isVisible = false
 
         lifecycleScope.launch {
             viewModel.getCurrentPosition()
@@ -99,9 +121,37 @@ class MapFragment : Fragment() {
         }
 
         binding.btnStartAddressOnMap.setOnClickListener {
+            binding.btnSelectPoint.isVisible = true
             val centerPoint = ScreenPoint((binding.mvMain.mapWindow.width() / 2).toFloat(), (binding.mvMain.mapWindow.height() / 2).toFloat())
-            val placemark = map.mapObjects.addPlacemark(binding.mvMain.mapWindow.screenToWorld(centerPoint)!!).setText("cnfhn")
             Log.i("world", binding.mvMain.mapWindow.screenToWorld(centerPoint)!!.latitude.toString())
+            map.addCameraListener(cameraStartListener)
+        }
+
+        binding.btnEndAddressOnMap.setOnClickListener {
+            binding.btnSelectEndPoint.isVisible = true
+            val centerPoint = ScreenPoint((binding.mvMain.mapWindow.width() / 2).toFloat(), (binding.mvMain.mapWindow.height() / 2).toFloat())
+            Log.i("world", binding.mvMain.mapWindow.screenToWorld(centerPoint)!!.latitude.toString())
+            map.addCameraListener(cameraEndListener)
+        }
+
+        binding.btnSelectPoint.setOnClickListener {
+            lifecycleScope.launch {
+                viewModel.getPointSearchResult(startPlacemark.geometry, map)
+            }.invokeOnCompletion {
+                viewModel.mldStartPoint.value = viewModel.mldGeoObject.value!!.geometry[0].point!!
+            }
+            map.removeCameraListener(cameraStartListener)
+            it.isVisible = false
+        }
+
+        binding.btnSelectEndPoint.setOnClickListener {
+            lifecycleScope.launch {
+                viewModel.getPointSearchResult(endPlacemark.geometry, map)
+            }.invokeOnCompletion {
+                viewModel.mldEndPoint.value = viewModel.mldGeoObject.value!!.geometry[0].point!!
+            }
+            map.removeCameraListener(cameraEndListener)
+            it.isVisible = false
         }
 
         binding.btnToUserLocation.setOnClickListener {
@@ -146,6 +196,7 @@ class MapFragment : Fragment() {
                 Log.i("addressSearch", "start")
                 viewModel.getAddressSearchResult(parent.getItemAtPosition(position).toString(), binding.mvMain.map)
             }.invokeOnCompletion {
+                startPlacemark.isVisible = true
                 Log.i("addressSearch", "end")
                 viewModel.mldStartPoint.value = viewModel.mldGeoObject.value!!.geometry[0].point!!
 //                points["start"] = viewModel.mldGeoObject.value!!.geometry[0].point!!
@@ -162,6 +213,7 @@ class MapFragment : Fragment() {
                 Log.i("addressSearch", "start")
                 viewModel.getAddressSearchResult(parent.getItemAtPosition(position).toString(), binding.mvMain.map)
             }.invokeOnCompletion {
+                endPlacemark.isVisible = true
                 Log.i("addressSearch", "end")
                 viewModel.mldEndPoint.value = viewModel.mldGeoObject.value!!.geometry[0].point!!
 //                points["start"] = viewModel.mldGeoObject.value!!.geometry[0].point!!
@@ -172,9 +224,11 @@ class MapFragment : Fragment() {
         }
 
         viewModel.mldStartPoint.observe(requireActivity(), Observer {
+            startPlacemark.isVisible = true
             setPin(it, "Стартовая точка")
         })
         viewModel.mldEndPoint.observe(requireActivity(), Observer {
+            startPlacemark.isVisible = true
             setPin(it, "Конечная точка")
             lifecycleScope.launch {
                 viewModel.getRouteByPoints(viewModel.mldStartPoint.value!!, it)

@@ -162,6 +162,28 @@
             android:layout_marginBottom="12dp"
             android:text="@string/continue_text"/>
 
+        <Button
+            android:id="@+id/btnSelectPoint"
+            style="@style/main_button_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="12dp"
+            android:text="@string/select_a_point"/>
+
+        <Button
+            android:id="@+id/btnSelectEndPoint"
+            style="@style/main_button_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="12dp"
+            android:text="@string/select_a_point"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
