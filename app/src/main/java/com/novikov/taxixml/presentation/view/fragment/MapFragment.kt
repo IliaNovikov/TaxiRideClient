@@ -1,5 +1,6 @@
 package com.novikov.taxixml.presentation.view.fragment
 
+import android.graphics.PointF
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -19,14 +20,22 @@ import com.novikov.taxixml.presentation.view.dialog.TariffDialog
 import com.novikov.taxixml.presentation.viewmodel.MainFragmentViewModel
 import com.novikov.taxixml.presentation.viewmodel.MapFragmentViewModel
 import com.novikov.taxixml.presentation.viewmodel.OrderTaxiFragmentViewModel
+import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.ScreenPoint
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.geometry.Polyline
+import com.yandex.mapkit.layers.ObjectEvent
+import com.yandex.mapkit.location.LocationViewSource
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapObject
+import com.yandex.mapkit.map.MapObjectCollectionListener
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.search.ToponymObjectMetadata
+import com.yandex.mapkit.user_location.UserLocationObjectListener
+import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -40,6 +49,7 @@ class MapFragment : Fragment() {
     private lateinit var startPlacemark: PlacemarkMapObject
     private lateinit var endPlacemark: PlacemarkMapObject
     private lateinit var map: Map
+    private lateinit var mapKitInstance: MapKit
 
     private lateinit var tariffDialog: TariffDialog
 
@@ -53,6 +63,10 @@ class MapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMapBinding.inflate(inflater)
+
+        mapKitInstance = MapKitFactory.getInstance()
+        val userLocation = mapKitInstance.createUserLocationLayer(binding.mvMain.mapWindow)
+        userLocation.isVisible = true
 
         map = binding.mvMain.map
         tariffDialog = TariffDialog()
@@ -82,6 +96,12 @@ class MapFragment : Fragment() {
             lifecycleScope.launch {
                 viewModel.getAddressesByString(it.toString())
             }
+        }
+
+        binding.btnStartAddressOnMap.setOnClickListener {
+            val centerPoint = ScreenPoint((binding.mvMain.mapWindow.width() / 2).toFloat(), (binding.mvMain.mapWindow.height() / 2).toFloat())
+            val placemark = map.mapObjects.addPlacemark(binding.mvMain.mapWindow.screenToWorld(centerPoint)!!).setText("cnfhn")
+            Log.i("world", binding.mvMain.mapWindow.screenToWorld(centerPoint)!!.latitude.toString())
         }
 
         binding.btnToUserLocation.setOnClickListener {

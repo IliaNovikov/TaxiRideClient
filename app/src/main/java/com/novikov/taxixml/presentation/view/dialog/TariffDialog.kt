@@ -35,6 +35,8 @@ class TariffDialog(var distance: Float = 0.0f) : BottomSheetDialogFragment() {
         btnComfort.text = "Comfort \n" + (distance / 1000f * Coefs.COMFORT).toString()
         btnBusiness.text = "Business \n" + (distance / 1000f * Coefs.BUSINESS).toString()
 
+
+
         return view
     }
 

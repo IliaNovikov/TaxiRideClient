@@ -34,7 +34,7 @@
 
     <style name="main_title_style">
         <item name="android:fontFamily">@font/inter_semibold</item>
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
