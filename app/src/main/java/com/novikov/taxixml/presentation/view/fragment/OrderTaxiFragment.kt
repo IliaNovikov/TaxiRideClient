@@ -42,7 +42,7 @@ class OrderTaxiFragment : Fragment() {
             NavigationController.navHost.navigate(R.id.settingsFragment)
         }
         binding.btnToStartAddress.setOnClickListener {
-            NavigationController.navHost.navigate(R.id.mainFragment)
+            NavigationController.navHost.navigate(R.id.mapFragment)
         }
         binding.btnToEndAddress.setOnClickListener {
             NavigationController.navHost.navigate(R.id.mainFragment)

@@ -58,4 +58,5 @@
     <string name="final_address">Final address</string>
     <string name="saved_cards">Saved cards</string>
     <string name="city_street_house">City, street, house</string>
+    <string name="choose_tariff">Choose tariff</string>
 </resources>

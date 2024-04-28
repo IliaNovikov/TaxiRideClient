@@ -71,7 +71,7 @@ class AddressRepositoryImpl : AddressRepository {
             return addressesList.toTypedArray().copyOfRange(0, 3)
         }
         catch (ex : Exception){
-            Log.e("repo", ex.message.toString())
+            Log.e("repo addresses", ex.message.toString())
             return arrayOf("")
         }
 

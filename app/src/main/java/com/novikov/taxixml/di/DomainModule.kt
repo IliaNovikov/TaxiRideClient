@@ -7,6 +7,7 @@ import com.novikov.taxixml.domain.usecase.GetAddressesByStringUseCase
 import com.novikov.taxixml.domain.usecase.GetUserDataUseCase
 import com.novikov.taxixml.domain.usecase.GetUserPositionUseCase
 import com.novikov.taxixml.domain.usecase.SearchByAddressUseCase
+import com.novikov.taxixml.domain.usecase.SearchByPointUseCase
 import com.novikov.taxixml.domain.usecase.SetUserDataUseCase
 import com.novikov.taxixml.domain.usecase.SetUserPositionUseCase
 import dagger.Module
@@ -41,6 +42,16 @@ class DomainModule {
     @Provides
     fun provideGetAddressesByStringUseCase(addressRepository: AddressRepository) : GetAddressesByStringUseCase{
         return GetAddressesByStringUseCase(addressRepository)
+    }
+
+    @Provides
+    fun provideSearchByPointUseCase(): SearchByPointUseCase{
+        return SearchByPointUseCase()
+    }
+
+    @Provides
+    fun provideSearchByAddressUseCase(): SearchByAddressUseCase{
+        return SearchByAddressUseCase()
     }
 
 }

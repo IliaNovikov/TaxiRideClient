@@ -55,4 +55,5 @@
     <string name="final_address">Конечный адрес</string>
     <string name="saved_cards">Сохраненные карты</string>
     <string name="city_street_house">Город, улица, дом</string>
+    <string name="choose_tariff">Выберете тариф</string>
 </resources>
