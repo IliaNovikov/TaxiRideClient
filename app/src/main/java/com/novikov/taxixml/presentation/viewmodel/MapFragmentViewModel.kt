@@ -54,6 +54,7 @@ class MapFragmentViewModel @Inject constructor(
     val mldEndPoint = MutableLiveData(Point())
 
     val mldDistance = MutableLiveData(0.0f)
+    val mldTraffic = MutableLiveData(0.0f)
 
     suspend fun getCurrentPosition(){
         position.value = getUserPositionUseCase.execute()
@@ -104,12 +105,33 @@ class MapFragmentViewModel @Inject constructor(
                                 results)
                             Log.i("results", results[0].toString())
                             Log.i("routeEndPoint", endPoint.longitude.toString())
-                            mldDistance.value = results[0]
+                            mldDistance.value = p0[0].metadata.weight.distance.value.toFloat()
 //                            Log.i("routeSecondPos", secondPos.toString())
 //                            Log.i("routeLength", PolylineUtils.distanceBetweenPolylinePositions(mldRoutePolyline.value!!,
 //                                firstPos!!,
 //                                secondPos!!
 //                            ).toString())
+//                            for(i in p0[0].jamSegments){
+//                                Log.i("jamSegment $i", i.speed.toString())
+//                                Log.i("jamSegment $i", i.jamType.ordinal.toString())
+//                                Log.i("jamSegment $i", i.jamType.name)
+//                            }
+
+                            var sum = 0
+                            var count = 0
+
+                            p0[0].jamSegments.forEach { it -> run {
+                                if ( it.jamType.ordinal != 0 ) {
+                                    sum += it.jamType.ordinal
+                                    count += 1
+                                }
+                            } }
+
+                            mldTraffic.value = (sum/count).toFloat()
+
+                            Log.i("sum", sum.toString())
+                            Log.i("avg", (sum/count).toString())
+                            Log.i("weight", p0[0].metadata.weight.distance.value.toString())
                         }
 
                     }

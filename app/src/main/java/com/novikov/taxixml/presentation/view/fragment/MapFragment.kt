@@ -27,7 +27,9 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.CameraUpdateReason
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.map.PlacemarkMapObject
+import com.yandex.mapkit.map.PolylineMapObject
 import com.yandex.mapkit.map.TextStyle
+import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -42,6 +44,7 @@ class MapFragment : Fragment() {
     private lateinit var endPlacemark: PlacemarkMapObject
     private lateinit var map: Map
     private lateinit var mapKitInstance: MapKit
+    private lateinit var routePolyline: PolylineMapObject
     private val cameraStartListener = object : CameraListener{
         override fun onCameraPositionChanged(
             p0: Map,
@@ -98,6 +101,8 @@ class MapFragment : Fragment() {
         endPlacemark = binding.mvMain.map.mapObjects.addPlacemark(viewModel.mldEndPoint.value!!)
         startPlacemark.isVisible = false
         endPlacemark.isVisible = false
+
+        routePolyline = binding.mvMain.map.mapObjects.addPolyline()
 
         binding.btnSelectPoint.isVisible = false
         binding.btnSelectEndPoint.isVisible = false
@@ -180,6 +185,7 @@ class MapFragment : Fragment() {
 
         binding.btnContinue.setOnClickListener {
             tariffDialog.distance = viewModel.mldDistance.value!!
+            tariffDialog.traffic = viewModel.mldTraffic.value!!
             tariffDialog.show(parentFragmentManager, "tariff")
         }
 
@@ -224,10 +230,30 @@ class MapFragment : Fragment() {
         }
 
         viewModel.mldStartPoint.observe(requireActivity(), Observer {
+            try{
+                binding.etStartAddress.setText(viewModel.mldGeoObject.value!!.
+                metadataContainer.getItem(ToponymObjectMetadata::class.java).address.formattedAddress
+                    .split(",")
+                    .subList(2, 5)
+                    .joinToString(","))
+            }
+            catch (ex: Exception){
+                Log.e("endPoint", ex.message.toString())
+            }
             startPlacemark.isVisible = true
             setPin(it, "Стартовая точка")
         })
         viewModel.mldEndPoint.observe(requireActivity(), Observer {
+            try{
+                binding.etEndAddress.setText(viewModel.mldGeoObject.value!!.
+                metadataContainer.getItem(ToponymObjectMetadata::class.java).address.formattedAddress
+                    .split(",")
+                    .subList(2, 5)
+                    .joinToString(","))
+            }
+            catch (ex: Exception){
+                Log.e("endPoint", ex.message.toString())
+            }
             startPlacemark.isVisible = true
             setPin(it, "Конечная точка")
             lifecycleScope.launch {
@@ -239,7 +265,8 @@ class MapFragment : Fragment() {
                         && viewModel.mldStartPoint.value!!.longitude == viewModel.mldEndPoint.value!!.longitude)
                         binding.mvMain.map.mapObjects.addPolyline()
                     else
-                        binding.mvMain.map.mapObjects.addPolyline(viewModel.mldRoutePolyline.value!!)
+                        routePolyline.geometry = viewModel.mldRoutePolyline.value!!
+//                        binding.mvMain.map.mapObjects.addPolyline(viewModel.mldRoutePolyline.value!!)
                 }
                 catch (ex: Exception){
                     Log.e("polyline", ex.message.toString())
