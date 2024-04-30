@@ -10,5 +10,6 @@ import javax.inject.Inject
 class TariffDialogViewModel @Inject constructor(private val app: Application) : AndroidViewModel(app) {
 
     val mldTariff = MutableLiveData("econom")
+    val mldPaymentMethod = MutableLiveData(0)
 
 }

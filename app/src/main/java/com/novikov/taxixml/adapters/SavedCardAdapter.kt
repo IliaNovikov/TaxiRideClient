@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.novikov.taxixml.R
@@ -26,5 +27,11 @@ class SavedCardAdapter(private val context: Context, private val cards: List<Car
         val card = cards[position]
 
         holder.itemView.findViewById<TextView>(R.id.tvCardNumber).text = card.number.substring(card.number.length - 4, card.number.length)
+        if (card.number.startsWith("2"))
+            holder.itemView.findViewById<ImageView>(R.id.ivCardLogo).setImageDrawable(context.getDrawable(R.drawable.mir_logo))
+        else if (card.number.startsWith("4"))
+            holder.itemView.findViewById<ImageView>(R.id.ivCardLogo).setImageDrawable(context.getDrawable(R.drawable.visa_logo))
+        else if (card.number.startsWith("5"))
+            holder.itemView.findViewById<ImageView>(R.id.ivCardLogo).setImageDrawable(context.getDrawable(R.drawable.mastercard_logo))
     }
 }

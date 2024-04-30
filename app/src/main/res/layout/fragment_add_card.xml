@@ -29,12 +29,14 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilCardNumber"
                 style="@style/base_edittext_style"
-                app:endIconMode="clear_text"
+                app:endIconMode="custom"
+                app:endIconTint="@null"
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="72dp"
-                android:hint="@string/card_number">
+                android:hint="@string/card_number"
+                >
 >
 
                 <com.santalu.maskara.widget.MaskEditText
@@ -43,7 +45,7 @@
                     android:layout_height="match_parent"
                     app:mask="#### #### #### ####"
                     android:inputType="number"
-                    android:maxLength="19"/>
+                    android:maxLength="19" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout

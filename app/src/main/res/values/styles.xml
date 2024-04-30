@@ -48,7 +48,7 @@
     <style name="main_text_style">
         <item name="android:fontFamily">@font/inter</item>
         <item name="android:textColor">@color/accentColor</item>
-        <item name="android:textSize">10pt</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="ShapeAppearanceOverlay.MaterialCardView.Cut" parent="">

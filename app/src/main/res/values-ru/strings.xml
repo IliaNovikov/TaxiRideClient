@@ -56,4 +56,5 @@
     <string name="saved_cards">Сохраненные карты</string>
     <string name="city_street_house">Город, улица, дом</string>
     <string name="choose_tariff">Выберете тариф</string>
+    <string name="choose_card">Выберете карту</string>
 </resources>

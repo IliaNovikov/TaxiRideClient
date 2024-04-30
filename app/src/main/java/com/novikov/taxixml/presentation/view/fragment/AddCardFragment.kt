@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputLayout
@@ -65,9 +66,18 @@ class AddCardFragment : Fragment() {
 
             Log.i("add card fragment", binding.etCardNumber.unMasked)
         }
-        binding.tilCardNumber.setEndIconOnClickListener {
-            binding.etCardNumber.text?.clear()
-            Log.i("listener", "work")
+
+        binding.etCardNumber.addTextChangedListener {
+            if (it.isNullOrEmpty().not()){
+                if (it!!.startsWith("2"))
+                    binding.tilCardNumber.endIconDrawable = requireContext().getDrawable(R.drawable.mir_logo)
+                else if (it.startsWith("4"))
+                    binding.tilCardNumber.endIconDrawable = requireContext().getDrawable(R.drawable.visa_logo)
+                else if (it.startsWith("5"))
+                    binding.tilCardNumber.endIconDrawable = requireContext().getDrawable(R.drawable.mastercard_icon)
+                else
+                    binding.tilCardNumber.endIconDrawable = null
+            }
         }
 
         viewModel.cardNumberErrorEnabled.observe(requireActivity()) {
