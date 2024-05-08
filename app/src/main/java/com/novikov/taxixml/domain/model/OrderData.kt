@@ -1,3 +1,14 @@
 package com.novikov.taxixml.domain.model
 
-data class OrderData(var startAddress: Address, var endAddress: Address, var price: Float, var clientUid: String, var driverUid: String)
+import com.yandex.mapkit.geometry.Point
+
+data class OrderData(var startAddress: String,
+                     var endAddress: String,
+                     var startPoint: Point,
+                     var endPoint: Point,
+                     var tariff: String,
+                     var price: Int,
+                     var status: String,
+                     var paymentType: String,
+                     var clientUid: String,
+                     var driverUid: String?)

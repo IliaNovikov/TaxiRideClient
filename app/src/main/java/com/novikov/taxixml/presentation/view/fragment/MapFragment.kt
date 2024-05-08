@@ -17,6 +17,7 @@ import com.novikov.taxixml.R
 import com.novikov.taxixml.databinding.FragmentMapBinding
 import com.novikov.taxixml.presentation.view.dialog.TariffDialog
 import com.novikov.taxixml.presentation.viewmodel.MapFragmentViewModel
+import com.novikov.taxixml.singleton.UserInfo
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.ScreenPoint
@@ -30,6 +31,7 @@ import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.map.PolylineMapObject
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.search.ToponymObjectMetadata
+import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -45,6 +47,8 @@ class MapFragment : Fragment() {
     private lateinit var map: Map
     private lateinit var mapKitInstance: MapKit
     private lateinit var routePolyline: PolylineMapObject
+    private lateinit var userLocation: UserLocationLayer
+
     private val cameraStartListener = object : CameraListener{
         override fun onCameraPositionChanged(
             p0: Map,
@@ -84,7 +88,7 @@ class MapFragment : Fragment() {
         binding = FragmentMapBinding.inflate(inflater)
 
         mapKitInstance = MapKitFactory.getInstance()
-        val userLocation = mapKitInstance.createUserLocationLayer(binding.mvMain.mapWindow)
+        userLocation = mapKitInstance.createUserLocationLayer(binding.mvMain.mapWindow)
         userLocation.isVisible = true
 
         map = binding.mvMain.map
@@ -106,12 +110,29 @@ class MapFragment : Fragment() {
 
         binding.btnSelectPoint.isVisible = false
         binding.btnSelectEndPoint.isVisible = false
+        binding.btnContinue.isEnabled = false
 
-        lifecycleScope.launch {
-            viewModel.getCurrentPosition()
-        }.invokeOnCompletion {
-            binding.mvMain.map.move(CameraPosition(
-                Point(viewModel.position.value!!.latitude, viewModel.position.value!!.longitude), 14f, 0f, 0f))
+        try{
+            lifecycleScope.launch {
+                viewModel.getCurrentPosition()
+            }.invokeOnCompletion {
+                lifecycleScope.launch {
+                    viewModel.getPointSearchResult(Point(viewModel.position.value!!.latitude, viewModel.position.value!!.longitude), map)
+                }.invokeOnCompletion {
+                    try {
+                        binding.mvMain.map.move(CameraPosition(
+                            Point(viewModel.position.value!!.latitude, viewModel.position.value!!.longitude), 14f, 0f, 0f))
+                        viewModel.mldStartPoint.value = Point(viewModel.position.value!!.latitude, viewModel.position.value!!.longitude)
+                    }
+                    catch (ex:Exception){
+                        Log.e("getCurrentPosition", ex.message.toString())
+                    }
+                }
+
+            }
+        }
+        catch (ex: Exception){
+            Log.e("getCurrentPosition", ex.message.toString())
         }
 
         binding.etStartAddress.addTextChangedListener {
@@ -190,11 +211,15 @@ class MapFragment : Fragment() {
         }
 
         viewModel.addressArray.observe(requireActivity(), Observer {
-            if (binding.etStartAddress.isFocused)
-                binding.etStartAddress.setAdapter(ArrayAdapter(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, it))
-            else if (binding.etEndAddress.isFocused)
-                binding.etEndAddress.setAdapter(ArrayAdapter(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, it))
-
+            try{
+                if (binding.etStartAddress.isFocused)
+                    binding.etStartAddress.setAdapter(ArrayAdapter(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, it))
+                else if (binding.etEndAddress.isFocused)
+                    binding.etEndAddress.setAdapter(ArrayAdapter(requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, it))
+            }
+            catch (ex: Exception){
+                Log.e("addressArray", ex.message.toString())
+            }
         })
 
         binding.etStartAddress.setOnItemClickListener { parent, view, position, id ->
@@ -231,48 +256,93 @@ class MapFragment : Fragment() {
 
         viewModel.mldStartPoint.observe(requireActivity(), Observer {
             try{
-                binding.etStartAddress.setText(viewModel.mldGeoObject.value!!.
+                val address = viewModel.mldGeoObject.value!!.
                 metadataContainer.getItem(ToponymObjectMetadata::class.java).address.formattedAddress
                     .split(",")
                     .subList(2, 5)
-                    .joinToString(","))
+                    .joinToString(",")
+                binding.etStartAddress.setText(address)
+                UserInfo.orderData.startPoint = it
+                UserInfo.orderData.startAddress = address
+
             }
             catch (ex: Exception){
                 Log.e("endPoint", ex.message.toString())
             }
-            startPlacemark.isVisible = true
-            setPin(it, "Стартовая точка")
+            try{
+                startPlacemark.isVisible = true
+                setPin(it, "Стартовая точка")
+                if(binding.etEndAddress.text.isNotEmpty()) {
+                    binding.btnContinue.isEnabled = true
+                    lifecycleScope.launch {
+                        viewModel.getRouteByPoints(it, viewModel.mldEndPoint.value!!)
+                        Log.i(
+                            "startPoint",
+                            viewModel.mldStartPoint.value!!.longitude.toString() + " " + viewModel.mldStartPoint.value!!.latitude.toString()
+                        )
+                    }.invokeOnCompletion {
+                        try {
+                            if (viewModel.mldStartPoint.value!!.latitude == viewModel.mldEndPoint.value!!.latitude
+                                && viewModel.mldStartPoint.value!!.longitude == viewModel.mldEndPoint.value!!.longitude
+                            )
+                                binding.mvMain.map.mapObjects.addPolyline()
+                            else
+                                routePolyline.geometry = viewModel.mldRoutePolyline.value!!
+//                        binding.mvMain.map.mapObjects.addPolyline(viewModel.mldRoutePolyline.value!!)
+                        } catch (ex: Exception) {
+                            Log.e("polyline", ex.message.toString())
+                            binding.mvMain.map.mapObjects.addPolyline(Polyline())
+                        }
+                    }
+                }
+            }
+            catch (ex: Exception){
+                Log.e("mldStartPoint", ex.message.toString())
+            }
+
         })
         viewModel.mldEndPoint.observe(requireActivity(), Observer {
             try{
-                binding.etEndAddress.setText(viewModel.mldGeoObject.value!!.
+                val address = viewModel.mldGeoObject.value!!.
                 metadataContainer.getItem(ToponymObjectMetadata::class.java).address.formattedAddress
                     .split(",")
                     .subList(2, 5)
-                    .joinToString(","))
+                    .joinToString(",")
+                binding.etEndAddress.setText(address)
+                UserInfo.orderData.endPoint = it
+                UserInfo.orderData.endAddress = address
             }
             catch (ex: Exception){
                 Log.e("endPoint", ex.message.toString())
             }
-            startPlacemark.isVisible = true
-            setPin(it, "Конечная точка")
-            lifecycleScope.launch {
-                viewModel.getRouteByPoints(viewModel.mldStartPoint.value!!, it)
-                Log.i("startPoint", viewModel.mldStartPoint.value!!.longitude.toString() + " " + viewModel.mldStartPoint.value!!.latitude.toString())
-            }.invokeOnCompletion {
-                try {
-                    if(viewModel.mldStartPoint.value!!.latitude == viewModel.mldEndPoint.value!!.latitude
-                        && viewModel.mldStartPoint.value!!.longitude == viewModel.mldEndPoint.value!!.longitude)
-                        binding.mvMain.map.mapObjects.addPolyline()
-                    else
-                        routePolyline.geometry = viewModel.mldRoutePolyline.value!!
+            try{
+                startPlacemark.isVisible = true
+                setPin(it, "Конечная точка")
+                if(binding.etStartAddress.text.isNotEmpty()){
+                    binding.btnContinue.isEnabled = true
+                    lifecycleScope.launch {
+                        viewModel.getRouteByPoints(viewModel.mldStartPoint.value!!, it)
+                        Log.i("startPoint", viewModel.mldStartPoint.value!!.longitude.toString() + " " + viewModel.mldStartPoint.value!!.latitude.toString())
+                    }.invokeOnCompletion {
+                        try {
+                            if(viewModel.mldStartPoint.value!!.latitude == viewModel.mldEndPoint.value!!.latitude
+                                && viewModel.mldStartPoint.value!!.longitude == viewModel.mldEndPoint.value!!.longitude)
+                                binding.mvMain.map.mapObjects.addPolyline()
+                            else
+                                routePolyline.geometry = viewModel.mldRoutePolyline.value!!
 //                        binding.mvMain.map.mapObjects.addPolyline(viewModel.mldRoutePolyline.value!!)
-                }
-                catch (ex: Exception){
-                    Log.e("polyline", ex.message.toString())
-                    binding.mvMain.map.mapObjects.addPolyline(Polyline())
+                        }
+                        catch (ex: Exception){
+                            Log.e("polyline", ex.message.toString())
+                            binding.mvMain.map.mapObjects.addPolyline(Polyline())
+                        }
+                    }
                 }
             }
+            catch (ex: Exception){
+                Log.e("mldEndPoint", ex.message.toString())
+            }
+
 
         })
 

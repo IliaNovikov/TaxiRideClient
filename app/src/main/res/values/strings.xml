@@ -60,4 +60,7 @@
     <string name="city_street_house">City, street, house</string>
     <string name="choose_tariff">Choose tariff</string>
     <string name="choose_card">Choose card</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="points" translatable="false">&#8226;&#8226;&#8226;&#8226;</string>
 </resources>

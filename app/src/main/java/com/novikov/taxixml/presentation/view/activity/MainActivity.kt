@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
                 if (UserInfo.name.isNotEmpty()){
                     Log.i("firebaseUser", FirebaseAuth.getInstance().currentUser?.uid.toString())
-                    NavigationController.navHost.navigate(R.id.orderTaxiFragment)
+                    NavigationController.navHost.navigate(R.id.mapFragment)
                     Toast.makeText(this, FirebaseAuth.getInstance().currentUser?.phoneNumber, Toast.LENGTH_LONG).show()
                 }
                 else{

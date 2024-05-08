@@ -1,8 +1,10 @@
 package com.novikov.taxixml.di
 
 import com.novikov.taxixml.domain.repository.AddressRepository
+import com.novikov.taxixml.domain.repository.OrderRepository
 import com.novikov.taxixml.domain.repository.UserDataRepository
 import com.novikov.taxixml.domain.repository.UserPositionRepository
+import com.novikov.taxixml.domain.usecase.CreateOrderUseCase
 import com.novikov.taxixml.domain.usecase.GetAddressesByStringUseCase
 import com.novikov.taxixml.domain.usecase.GetUserDataUseCase
 import com.novikov.taxixml.domain.usecase.GetUserPositionUseCase
@@ -52,6 +54,11 @@ class DomainModule {
     @Provides
     fun provideSearchByAddressUseCase(): SearchByAddressUseCase{
         return SearchByAddressUseCase()
+    }
+
+    @Provides
+    fun provideCreateOrderUseCase(orderRepository: OrderRepository) : CreateOrderUseCase{
+        return CreateOrderUseCase(orderRepository)
     }
 
 }

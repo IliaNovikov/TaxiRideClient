@@ -64,6 +64,7 @@
                             android:layout_width="200dp"
                             android:layout_height="wrap_content"
                             style="@style/base_edittext_style"
+                            android:hint="@string/from"
                             android:paddingHorizontal="12dp"
                             android:background="@color/primaryColor" />
 
@@ -93,6 +94,7 @@
                             android:id="@+id/etEndAddress"
                             android:layout_width="200dp"
                             android:layout_height="wrap_content"
+                            android:hint="@string/to"
                             style="@style/base_edittext_style"
                             android:paddingHorizontal="12dp"
                             android:background="@color/primaryColor"
@@ -120,8 +122,8 @@
         <ImageButton
             android:id="@+id/btnMinusScale"
             style="@style/main_rounded_button_style"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="224dp"
             android:src="@drawable/minus_svg"
@@ -131,8 +133,8 @@
         <ImageButton
             android:id="@+id/btnPlusScale"
             style="@style/main_rounded_button_style"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="156dp"
             android:src="@drawable/plus_svg"
@@ -142,11 +144,11 @@
         <ImageButton
             android:id="@+id/btnToUserLocation"
             style="@style/main_rounded_button_style"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="64dp"
-            android:src="@drawable/location_icon"
+            android:src="@drawable/position_svg"
             app:barrierMargin="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

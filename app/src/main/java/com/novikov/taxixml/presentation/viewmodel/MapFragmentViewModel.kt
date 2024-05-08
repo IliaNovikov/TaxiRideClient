@@ -57,37 +57,48 @@ class MapFragmentViewModel @Inject constructor(
     val mldTraffic = MutableLiveData(0.0f)
 
     suspend fun getCurrentPosition(){
-        position.value = getUserPositionUseCase.execute()
+        try {
+            position.value = getUserPositionUseCase.execute()
+        }
+        catch (ex: Exception){
+            Log.e("getCurrentPosition", ex.message.toString())
+        }
     }
 
     suspend fun getAddressesByString(string: String){
         Log.i("vm", "start")
-        addressArray.value = getAddressesByStringUseCase.execute(string)
+        try {
+            addressArray.value = getAddressesByStringUseCase.execute(string)
+        }
+        catch (ex: Exception){
+            Log.e("getAddressByString", ex.message.toString())
+        }
     }
 
     suspend fun getRouteByPoints(startPoint: Point, endPoint: Point){
 
-        val countDownLatch = CountDownLatch(1)
+        try {
+            val countDownLatch = CountDownLatch(1)
 
-        val drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
-        val drivingOptions = DrivingOptions().apply {
-            routesCount = 1
-        }
-        val points = listOf(
-            RequestPoint(startPoint, RequestPointType.WAYPOINT, null, null),
-            RequestPoint(endPoint, RequestPointType.WAYPOINT, null, null)
-        )
-        val vehicleOptions = VehicleOptions()
-        val drivingSession = drivingRouter.requestRoutes(
-            points,
-            drivingOptions,
-            vehicleOptions,
-            object : DrivingSession.DrivingRouteListener {
-                override fun onDrivingRoutes(p0: MutableList<DrivingRoute>) {
+            val drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
+            val drivingOptions = DrivingOptions().apply {
+                routesCount = 1
+            }
+            val points = listOf(
+                RequestPoint(startPoint, RequestPointType.WAYPOINT, null, null),
+                RequestPoint(endPoint, RequestPointType.WAYPOINT, null, null)
+            )
+            val vehicleOptions = VehicleOptions()
+            val drivingSession = drivingRouter.requestRoutes(
+                points,
+                drivingOptions,
+                vehicleOptions,
+                object : DrivingSession.DrivingRouteListener {
+                    override fun onDrivingRoutes(p0: MutableList<DrivingRoute>) {
 //                    Log.i("route", p0[0].geometry.points.size.toString())
-                    if(p0.size > 0){
-                        if (p0[0].geometry.points.size > 0) {
-                            mldRoutePolyline.value = p0[0].geometry
+                        if(p0.size > 0){
+                            if (p0[0].geometry.points.size > 0) {
+                                mldRoutePolyline.value = p0[0].geometry
 //                            val polylineIndex = PolylineUtils.createPolylineIndex(mldRoutePolyline.value!!)
 //                            val firstPos = polylineIndex.closestPolylinePosition(startPoint,
 //                                PolylineIndex.Priority.CLOSEST_TO_START,
@@ -96,16 +107,16 @@ class MapFragmentViewModel @Inject constructor(
 //                                PolylineIndex.Priority.CLOSEST_TO_START,
 //                                0.5)
 
-                            val results = floatArrayOf(0f)
+                                val results = floatArrayOf(0f)
 
-                            Location.distanceBetween(startPoint.latitude,
-                                startPoint.longitude,
-                                endPoint.latitude,
-                                endPoint.longitude,
-                                results)
-                            Log.i("results", results[0].toString())
-                            Log.i("routeEndPoint", endPoint.longitude.toString())
-                            mldDistance.value = p0[0].metadata.weight.distance.value.toFloat()
+                                Location.distanceBetween(startPoint.latitude,
+                                    startPoint.longitude,
+                                    endPoint.latitude,
+                                    endPoint.longitude,
+                                    results)
+                                Log.i("results", results[0].toString())
+                                Log.i("routeEndPoint", endPoint.longitude.toString())
+                                mldDistance.value = p0[0].metadata.weight.distance.value.toFloat()
 //                            Log.i("routeSecondPos", secondPos.toString())
 //                            Log.i("routeLength", PolylineUtils.distanceBetweenPolylinePositions(mldRoutePolyline.value!!,
 //                                firstPos!!,
@@ -117,48 +128,58 @@ class MapFragmentViewModel @Inject constructor(
 //                                Log.i("jamSegment $i", i.jamType.name)
 //                            }
 
-                            var sum = 0
-                            var count = 0
+                                var sum = 0
+                                var count = 0
 
-                            p0[0].jamSegments.forEach { it -> run {
-                                if ( it.jamType.ordinal != 0 ) {
-                                    sum += it.jamType.ordinal
-                                    count += 1
-                                }
-                            } }
+                                p0[0].jamSegments.forEach { it -> run {
+                                    if ( it.jamType.ordinal != 0 ) {
+                                        sum += it.jamType.ordinal
+                                        count += 1
+                                    }
+                                } }
 
-                            mldTraffic.value = (sum/count).toFloat()
+                                mldTraffic.value = (sum/count).toFloat()
 
-                            Log.i("sum", sum.toString())
-                            Log.i("avg", (sum/count).toString())
-                            Log.i("weight", p0[0].metadata.weight.distance.value.toString())
+                                Log.i("sum", sum.toString())
+                                Log.i("avg", (sum/count).toString())
+                                Log.i("weight", p0[0].metadata.weight.distance.value.toString())
+                            }
+
                         }
-
+                        countDownLatch.countDown()
                     }
-                    countDownLatch.countDown()
-                }
 
-                override fun onDrivingRoutesError(p0: Error) {
-                    countDownLatch.countDown()
-                }
+                    override fun onDrivingRoutesError(p0: Error) {
+                        countDownLatch.countDown()
+                    }
 
+                }
+            )
+            withContext(Dispatchers.IO) {
+                countDownLatch.await()
             }
-        )
-        withContext(Dispatchers.IO) {
-            countDownLatch.await()
+        }
+        catch (ex: Exception){
+            Log.e("getRouteByPoints", ex.message.toString())
         }
     }
 
     suspend fun getPointSearchResult(point: Point, map: Map){
-        val resultGeoObject = searchByPointUseCase.execute(point, map)
-        try {
-            Log.i("vmpoint", resultGeoObject.obj?.metadataContainer!!.getItem(BusinessObjectMetadata::class.java).name)
+        try{
+            val resultGeoObject = searchByPointUseCase.execute(point, map)
+            try {
+                Log.i("vmpoint", resultGeoObject.obj?.metadataContainer!!.getItem(BusinessObjectMetadata::class.java).name)
+            }
+            catch (e: Exception){
+                Log.e("vmpoint", resultGeoObject.obj?.metadataContainer!!.getItem(ToponymObjectMetadata::class.java).address.formattedAddress)
+            }
+            geoObject = resultGeoObject.obj!!
+            mldGeoObject.value = geoObject
         }
-        catch (e: Exception){
-            Log.e("vmpoint", resultGeoObject.obj?.metadataContainer!!.getItem(ToponymObjectMetadata::class.java).address.formattedAddress)
+        catch (ex: Exception){
+            Log.e("getPointSearchResult", ex.message.toString())
         }
-        geoObject = resultGeoObject.obj!!
-        mldGeoObject.value = geoObject
+
     }
 
     suspend fun  getAddressSearchResult(address: String, map: Map){

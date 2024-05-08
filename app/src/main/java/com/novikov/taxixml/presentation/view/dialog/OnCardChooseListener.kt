@@ -4,6 +4,6 @@ import com.novikov.taxixml.domain.model.Card
 
 interface OnCardChooseListener {
 
-    fun onCardChoose(crd: Card)
+    fun onCardChoose(card: Card)
 
 }

@@ -103,6 +103,7 @@
             android:layout_weight="6"/>
 
         <TextView
+            android:id="@+id/tvCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/main_text_style"
@@ -120,5 +121,14 @@
             />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btnOrderTaxi"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        style="@style/main_button_style"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:text="@string/order_a_taxi"/>
 
 </LinearLayout>

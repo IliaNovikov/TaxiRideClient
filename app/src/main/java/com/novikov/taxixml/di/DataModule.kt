@@ -2,9 +2,11 @@ package com.novikov.taxixml.di
 
 import android.content.Context
 import com.novikov.taxixml.data.AddressRepositoryImpl
+import com.novikov.taxixml.data.OrderRepositoryImpl
 import com.novikov.taxixml.data.UserDataRepositoryImpl
 import com.novikov.taxixml.data.UserPositionRepositoryImpl
 import com.novikov.taxixml.domain.repository.AddressRepository
+import com.novikov.taxixml.domain.repository.OrderRepository
 import com.novikov.taxixml.domain.repository.UserDataRepository
 import com.novikov.taxixml.domain.repository.UserPositionRepository
 import dagger.Module
@@ -34,6 +36,12 @@ class DataModule {
     @Singleton
     fun provideAddressRepository() : AddressRepository{
         return AddressRepositoryImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrderRepository() : OrderRepository{
+        return OrderRepositoryImpl()
     }
 
 }
