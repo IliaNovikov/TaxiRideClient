@@ -4,6 +4,7 @@ import com.novikov.taxixml.domain.model.Address
 import com.novikov.taxixml.domain.model.Card
 import com.novikov.taxixml.domain.model.OrderData
 import com.yandex.mapkit.geometry.Point
+import java.time.LocalDate
 
 object UserInfo {
     var uid = ""
@@ -21,5 +22,6 @@ object UserInfo {
         paymentType = "",
         price = 0,
         clientUid =  "",
-        driverUid =  "")
+        driverUid =  "",
+        date = LocalDate.now().toString())
 }

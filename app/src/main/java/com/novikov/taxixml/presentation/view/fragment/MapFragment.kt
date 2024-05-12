@@ -17,6 +17,7 @@ import com.novikov.taxixml.R
 import com.novikov.taxixml.databinding.FragmentMapBinding
 import com.novikov.taxixml.presentation.view.dialog.TariffDialog
 import com.novikov.taxixml.presentation.viewmodel.MapFragmentViewModel
+import com.novikov.taxixml.singleton.NavigationController
 import com.novikov.taxixml.singleton.UserInfo
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
@@ -208,6 +209,10 @@ class MapFragment : Fragment() {
             tariffDialog.distance = viewModel.mldDistance.value!!
             tariffDialog.traffic = viewModel.mldTraffic.value!!
             tariffDialog.show(parentFragmentManager, "tariff")
+        }
+
+        binding.btnSettings.setOnClickListener {
+            NavigationController.navHost.navigate(R.id.settingsFragment)
         }
 
         viewModel.addressArray.observe(requireActivity(), Observer {

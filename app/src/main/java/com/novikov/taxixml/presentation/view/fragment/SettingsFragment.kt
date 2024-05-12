@@ -40,6 +40,10 @@ class SettingsFragment : Fragment() {
         }.create()
         loadingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+        binding.btnGoBack.setOnClickListener {
+            NavigationController.navHost.navigate(R.id.mapFragment)
+        }
+
         lifecycleScope.launch {
             loadingDialog.show()
             viewModel.getUserData()

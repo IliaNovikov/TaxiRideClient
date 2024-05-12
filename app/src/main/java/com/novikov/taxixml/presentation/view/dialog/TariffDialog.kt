@@ -21,6 +21,7 @@ import com.google.firebase.ktx.Firebase
 import com.novikov.taxixml.R
 import com.novikov.taxixml.domain.model.Card
 import com.novikov.taxixml.presentation.viewmodel.TariffDialogViewModel
+import com.novikov.taxixml.singleton.NavigationController
 import com.novikov.taxixml.singleton.UserInfo
 import com.novikov.taxixml.utilites.Coefs
 import com.novikov.taxixml.utilites.PaymentMethod
@@ -162,6 +163,8 @@ class TariffDialog(var distance: Float = 0.0f, var traffic: Float = 0.0f) : Bott
                 viewModel.createOrder()
             }.invokeOnCompletion {
                 loadingDialog.dismiss()
+                this.dismiss()
+                NavigationController.navHost.navigate(R.id.tripAwaitingFragment)
             }
         }
 

@@ -59,4 +59,6 @@
     <string name="choose_card">Выберете карту</string>
     <string name="from">Откуда</string>
     <string name="to">Куда</string>
+    <string name="driver_search">Поиск водителя</string>
+    <string name="cancel_trip">Отменить поездку</string>
 </resources>

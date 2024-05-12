@@ -133,6 +133,14 @@
                 android:layout_marginTop="16dp"
                 app:cornerRadius="10dp"
                 android:text="@string/save"/>
+            <Button
+                android:id="@+id/btnGoBack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/bordered_button_style"
+                android:layout_marginTop="16dp"
+                app:cornerRadius="10dp"
+                android:text="@string/go_back"/>
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

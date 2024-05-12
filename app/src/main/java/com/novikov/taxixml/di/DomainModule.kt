@@ -12,6 +12,7 @@ import com.novikov.taxixml.domain.usecase.SearchByAddressUseCase
 import com.novikov.taxixml.domain.usecase.SearchByPointUseCase
 import com.novikov.taxixml.domain.usecase.SetUserDataUseCase
 import com.novikov.taxixml.domain.usecase.SetUserPositionUseCase
+import com.novikov.taxixml.domain.usecase.DeleteOrderUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,6 +60,11 @@ class DomainModule {
     @Provides
     fun provideCreateOrderUseCase(orderRepository: OrderRepository) : CreateOrderUseCase{
         return CreateOrderUseCase(orderRepository)
+    }
+
+    @Provides
+    fun provideDeleteOrderUseCase(orderRepository: OrderRepository) : DeleteOrderUseCase{
+        return DeleteOrderUseCase(orderRepository)
     }
 
 }

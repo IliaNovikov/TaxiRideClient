@@ -63,4 +63,6 @@
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="points" translatable="false">&#8226;&#8226;&#8226;&#8226;</string>
+    <string name="driver_search">Driver search</string>
+    <string name="cancel_trip">Cancel trip</string>
 </resources>

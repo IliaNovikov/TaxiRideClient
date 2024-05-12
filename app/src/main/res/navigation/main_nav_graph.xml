@@ -88,10 +88,22 @@
         <action
             android:id="@+id/action_orderTaxiFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_orderTaxiFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.novikov.taxixml.presentation.view.fragment.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_mapFragment_to_tripAwaitingFragment"
+            app:destination="@id/tripAwaitingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tripAwaitingFragment"
+        android:name="com.novikov.taxixml.presentation.view.fragment.TripAwaitingFragment"
+        android:label="fragment_trip_awaiting"
+        tools:layout="@layout/fragment_trip_awaiting" />
 </navigation>
