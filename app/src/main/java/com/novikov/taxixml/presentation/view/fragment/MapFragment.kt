@@ -13,9 +13,15 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import com.novikov.taxixml.R
 import com.novikov.taxixml.databinding.FragmentMapBinding
+import com.novikov.taxixml.presentation.view.dialog.RatingDialog
 import com.novikov.taxixml.presentation.view.dialog.TariffDialog
+import com.novikov.taxixml.presentation.view.dialog.TripAwaitingDialog
+import com.novikov.taxixml.presentation.view.dialog.TripDialog
 import com.novikov.taxixml.presentation.viewmodel.MapFragmentViewModel
 import com.novikov.taxixml.singleton.NavigationController
 import com.novikov.taxixml.singleton.UserInfo
@@ -76,6 +82,9 @@ class MapFragment : Fragment() {
     }
 
     private lateinit var tariffDialog: TariffDialog
+    private lateinit var tripAwaitingDialog: TripAwaitingDialog
+    private lateinit var tripDialog: TripDialog
+    private lateinit var ratingDialog: RatingDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,6 +104,9 @@ class MapFragment : Fragment() {
         map = binding.mvMain.map
 
         tariffDialog = TariffDialog()
+        tripAwaitingDialog = TripAwaitingDialog()
+        tripDialog = TripDialog()
+        ratingDialog = RatingDialog()
 
         return binding.root
     }
@@ -112,6 +124,7 @@ class MapFragment : Fragment() {
         binding.btnSelectPoint.isVisible = false
         binding.btnSelectEndPoint.isVisible = false
         binding.btnContinue.isEnabled = false
+        binding.btnTrip.isVisible = false
 
         try{
             lifecycleScope.launch {
@@ -134,6 +147,30 @@ class MapFragment : Fragment() {
         }
         catch (ex: Exception){
             Log.e("getCurrentPosition", ex.message.toString())
+        }
+
+        lifecycleScope.launch {
+            viewModel.getLastOrder()
+        }.invokeOnCompletion {
+            if (UserInfo.orderData.status.isNotEmpty()){
+                when(UserInfo.orderData.status){
+                    "в ожидании" -> {
+                        binding.etStartAddress.setText(UserInfo.orderData.startAddress)
+                        binding.etEndAddress.setText(UserInfo.orderData.endAddress)
+                        tripAwaitingDialog.show(requireFragmentManager(), "tripAwatingDialog")
+                    }
+                    "принят" -> {
+                        binding.etStartAddress.setText(UserInfo.orderData.startAddress)
+                        binding.etEndAddress.setText(UserInfo.orderData.endAddress)
+                        tripDialog.show(requireFragmentManager(), "tripDialog")
+                        binding.btnTrip.isVisible = true
+                    }
+                    "завершен" -> {
+                        binding.btnTrip.isVisible = false
+                        ratingDialog.show(requireFragmentManager(), "ratingDialog")
+                    }
+                }
+            }
         }
 
         binding.etStartAddress.addTextChangedListener {
@@ -350,6 +387,10 @@ class MapFragment : Fragment() {
 
 
         })
+
+        binding.btnTrip.setOnClickListener {
+            tripDialog.show(requireFragmentManager(), "tripDialog")
+        }
 
 //        binding.mvMain.map.mapObjects.clear()
 

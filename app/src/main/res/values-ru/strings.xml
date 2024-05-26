@@ -61,4 +61,9 @@
     <string name="to">Куда</string>
     <string name="driver_search">Поиск водителя</string>
     <string name="cancel_trip">Отменить поездку</string>
+    <string name="your_driver">Ваш водитель</string>
+    <string name="rating">Рейтинг</string>
+    <string name="trip">Поездка</string>
+    <string name="rate_a_trip">Оцените поездку</string>
+    <string name="thanks_for_the_feedback">Спасибо за отзыв</string>
 </resources>

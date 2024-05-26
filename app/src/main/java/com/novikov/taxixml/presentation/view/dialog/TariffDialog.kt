@@ -5,17 +5,23 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.database
 import com.google.firebase.ktx.Firebase
 
 import com.novikov.taxixml.R
@@ -164,7 +170,32 @@ class TariffDialog(var distance: Float = 0.0f, var traffic: Float = 0.0f) : Bott
             }.invokeOnCompletion {
                 loadingDialog.dismiss()
                 this.dismiss()
-                NavigationController.navHost.navigate(R.id.tripAwaitingFragment)
+                TripAwaitingDialog().show(requireFragmentManager(), "tripAwaitingDialog")
+                com.google.firebase.Firebase.database.reference.
+                child("orders")
+                    .child(UserInfo.orderId)
+                    .child("status").addValueEventListener(object: ValueEventListener{
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if (snapshot.value.toString() == "в ожидании")
+                                Toast.makeText(requireContext(), "Ожидайте водителя", Toast.LENGTH_SHORT).show()
+                            else if(snapshot.value.toString() == "принят"){
+                                Toast.makeText(requireContext(), "Водитель принял заказ", Toast.LENGTH_SHORT).show()
+                                TripDialog().show(requireFragmentManager(), "tripDialog")
+                                this@TariffDialog.dismiss()
+                            }
+                            else if(snapshot.value.toString() == "завершен") {
+                                RatingDialog().show(requireFragmentManager(), "ratingDialog")
+                                Toast.makeText(requireContext(), "Поездка завершена", Toast.LENGTH_SHORT).show()
+                            }
+                            Log.i("orderStatusListener", snapshot.value.toString())
+                            Toast.makeText(requireContext(), "Заказ принят", Toast.LENGTH_SHORT).show()
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+
+                    })
             }
         }
 

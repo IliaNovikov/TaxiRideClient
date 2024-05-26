@@ -13,6 +13,10 @@ import com.novikov.taxixml.domain.usecase.SearchByPointUseCase
 import com.novikov.taxixml.domain.usecase.SetUserDataUseCase
 import com.novikov.taxixml.domain.usecase.SetUserPositionUseCase
 import com.novikov.taxixml.domain.usecase.DeleteOrderUseCase
+import com.novikov.taxixml.domain.usecase.GetDriverInfoUseCase
+import com.novikov.taxixml.domain.usecase.GetLastOrderUseCase
+import com.novikov.taxixml.domain.usecase.GetOrderDataUseCase
+import com.novikov.taxixml.domain.usecase.SetDriverRatingUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -65,6 +69,26 @@ class DomainModule {
     @Provides
     fun provideDeleteOrderUseCase(orderRepository: OrderRepository) : DeleteOrderUseCase{
         return DeleteOrderUseCase(orderRepository)
+    }
+
+    @Provides
+    fun provideGetOrderDataUseCase(orderRepository: OrderRepository) : GetOrderDataUseCase{
+        return GetOrderDataUseCase(orderRepository)
+    }
+
+    @Provides
+    fun provideGetLastOrderUseCase(orderRepository: OrderRepository): GetLastOrderUseCase{
+        return GetLastOrderUseCase(orderRepository)
+    }
+
+    @Provides
+    fun provideGetDriverInfoUseCase(orderRepository: OrderRepository): GetDriverInfoUseCase{
+        return GetDriverInfoUseCase(orderRepository)
+    }
+
+    @Provides
+    fun provideSetDriverRatingUseCase(orderRepository: OrderRepository): SetDriverRatingUseCase{
+        return SetDriverRatingUseCase(orderRepository)
     }
 
 }

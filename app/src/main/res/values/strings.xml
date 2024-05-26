@@ -65,4 +65,9 @@
     <string name="points" translatable="false">&#8226;&#8226;&#8226;&#8226;</string>
     <string name="driver_search">Driver search</string>
     <string name="cancel_trip">Cancel trip</string>
+    <string name="your_driver">Your driver</string>
+    <string name="rating">Rating</string>
+    <string name="trip">Trip</string>
+    <string name="rate_a_trip">Rate a trip</string>
+    <string name="thanks_for_the_feedback">Thanks for the feedback</string>
 </resources>

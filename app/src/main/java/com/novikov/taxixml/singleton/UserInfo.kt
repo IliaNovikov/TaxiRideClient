@@ -12,6 +12,7 @@ object UserInfo {
     var phone = ""
     var cards = arrayListOf<Card>()
     var savedAddresses = arrayListOf<Address>()
+    var orderId = ""
     var orderData = OrderData(
         startAddress =  "",
         endAddress =  "",

@@ -7,9 +7,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.novikov.taxixml.domain.model.Position
 import com.novikov.taxixml.domain.usecase.GetAddressesByStringUseCase
+import com.novikov.taxixml.domain.usecase.GetLastOrderUseCase
 import com.novikov.taxixml.domain.usecase.GetUserPositionUseCase
 import com.novikov.taxixml.domain.usecase.SearchByAddressUseCase
 import com.novikov.taxixml.domain.usecase.SearchByPointUseCase
+import com.novikov.taxixml.singleton.UserInfo
 import com.yandex.mapkit.GeoObject
 import com.yandex.mapkit.GeoObjectCollection
 import com.yandex.mapkit.RequestPoint
@@ -39,7 +41,8 @@ class MapFragmentViewModel @Inject constructor(
     private val getAddressesByStringUseCase: GetAddressesByStringUseCase,
     private val searchByPointUseCase: SearchByPointUseCase,
     private val searchByAddressUseCase: SearchByAddressUseCase,
-    private val getUserPositionUseCase: GetUserPositionUseCase) : AndroidViewModel(app) {
+    private val getUserPositionUseCase: GetUserPositionUseCase,
+    private val getLastOrderUseCase: GetLastOrderUseCase) : AndroidViewModel(app) {
 
     val addressArray = MutableLiveData<Array<String>>()
 
@@ -55,6 +58,13 @@ class MapFragmentViewModel @Inject constructor(
 
     val mldDistance = MutableLiveData(0.0f)
     val mldTraffic = MutableLiveData(0.0f)
+
+    suspend fun getLastOrder(){
+        UserInfo.orderData = getLastOrderUseCase.execute()
+        mldStartPoint.value = UserInfo.orderData.startPoint
+        mldEndPoint.value = UserInfo.orderData.endPoint
+        getRouteByPoints(mldStartPoint.value!!, mldEndPoint.value!!)
+    }
 
     suspend fun getCurrentPosition(){
         try {
@@ -99,13 +109,6 @@ class MapFragmentViewModel @Inject constructor(
                         if(p0.size > 0){
                             if (p0[0].geometry.points.size > 0) {
                                 mldRoutePolyline.value = p0[0].geometry
-//                            val polylineIndex = PolylineUtils.createPolylineIndex(mldRoutePolyline.value!!)
-//                            val firstPos = polylineIndex.closestPolylinePosition(startPoint,
-//                                PolylineIndex.Priority.CLOSEST_TO_START,
-//                                0.5)
-//                            val secondPos = polylineIndex.closestPolylinePosition(endPoint,
-//                                PolylineIndex.Priority.CLOSEST_TO_START,
-//                                0.5)
 
                                 val results = floatArrayOf(0f)
 
@@ -117,16 +120,6 @@ class MapFragmentViewModel @Inject constructor(
                                 Log.i("results", results[0].toString())
                                 Log.i("routeEndPoint", endPoint.longitude.toString())
                                 mldDistance.value = p0[0].metadata.weight.distance.value.toFloat()
-//                            Log.i("routeSecondPos", secondPos.toString())
-//                            Log.i("routeLength", PolylineUtils.distanceBetweenPolylinePositions(mldRoutePolyline.value!!,
-//                                firstPos!!,
-//                                secondPos!!
-//                            ).toString())
-//                            for(i in p0[0].jamSegments){
-//                                Log.i("jamSegment $i", i.speed.toString())
-//                                Log.i("jamSegment $i", i.jamType.ordinal.toString())
-//                                Log.i("jamSegment $i", i.jamType.name)
-//                            }
 
                                 var sum = 0
                                 var count = 0

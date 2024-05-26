@@ -22,7 +22,7 @@ class TariffDialogViewModel @Inject constructor(
     val mldPaymentMethod = MutableLiveData(0)
 
     suspend fun createOrder(){
-//        UserInfo.orderData.date = LocalDate.now()
+        UserInfo.orderData.date = LocalDate.now().toString()
         Log.i("orderDate", UserInfo.orderData.date.toString())
         createOrderUseCase.execute(UserInfo.orderData)
     }
