@@ -19,7 +19,10 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.database
+import com.google.firebase.database.ktx.database
 import com.novikov.taxixml.R
 import com.novikov.taxixml.databinding.ActivityMainBinding
 import com.novikov.taxixml.domain.model.Address
@@ -30,6 +33,7 @@ import com.novikov.taxixml.singleton.UserInfo
 import com.yandex.mapkit.MapKitFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -76,6 +80,24 @@ class MainActivity : AppCompatActivity() {
 
                 if (UserInfo.name.isNotEmpty()){
                     Log.i("firebaseUser", FirebaseAuth.getInstance().currentUser?.uid.toString())
+
+                    try {
+                        lifecycleScope.launch {
+                            Firebase.database.reference
+                                .child("orders").orderByChild("clientUid").equalTo(UserInfo.uid)
+                                .limitToLast(1).get().addOnCompleteListener {
+                                    UserInfo.orderId = it.result.children.elementAt(0).key.toString()
+                                }.await()
+
+                            Log.i("UserInfo.orderId", UserInfo.orderId)
+
+                            vm.getOrderData(UserInfo.orderId)
+                        }
+                    }
+                    catch (ex: Exception){
+                        Log.e("getOrderData activity", ex.message.toString())
+                    }
+
                     NavigationController.navHost.navigate(R.id.mapFragment)
                     Toast.makeText(this, FirebaseAuth.getInstance().currentUser?.phoneNumber, Toast.LENGTH_LONG).show()
                 }

@@ -76,6 +76,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.22")
 
     implementation("com.google.android.material:material:1.13.0-alpha01")
+    implementation("com.github.PhilJay:MPAndroidChart:v2.2.4")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

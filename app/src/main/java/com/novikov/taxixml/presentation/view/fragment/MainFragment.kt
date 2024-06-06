@@ -14,8 +14,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.firebase.Firebase
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.database
 import com.novikov.taxixml.R
 import com.novikov.taxixml.databinding.FragmentMainBinding
+import com.novikov.taxixml.presentation.view.dialog.RatingDialog
+import com.novikov.taxixml.presentation.view.dialog.TripAwaitingDialog
+import com.novikov.taxixml.presentation.view.dialog.TripDialog
 import com.novikov.taxixml.presentation.viewmodel.MainFragmentViewModel
 import com.novikov.taxixml.singleton.NavigationController
 import com.novikov.taxixml.singleton.UserInfo
@@ -41,6 +49,7 @@ import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.image.ImageProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
@@ -52,6 +61,10 @@ class MainFragment : Fragment() {
     private lateinit var mapWindow: MapWindow
 
     private lateinit var placemark: PlacemarkMapObject
+
+    private lateinit var tripAwaitingDialog: TripAwaitingDialog
+    private lateinit var tripDialog: TripDialog
+    private lateinit var ratingDialog: RatingDialog
 
     private val inputListener = object : InputListener{
         override fun onMapTap(p0: Map, p1: Point) {
@@ -66,7 +79,6 @@ class MainFragment : Fragment() {
         }
 
         override fun onMapLongTap(p0: Map, p1: Point) {
-            TODO("Not yet implemented")
         }
 
     }
@@ -110,6 +122,38 @@ class MainFragment : Fragment() {
     ): View {
 
         binding = FragmentMainBinding.inflate(inflater)
+
+        tripDialog = TripDialog()
+        tripAwaitingDialog = TripAwaitingDialog()
+        ratingDialog = RatingDialog()
+
+        lifecycleScope.launch {
+            Firebase.database.reference.child("orders").orderByChild("clientUid").equalTo(UserInfo.uid).limitToLast(1).get().addOnCompleteListener {
+
+                val resultOrder = it.result.children.elementAt(0)
+
+                Log.i("resultOrder", resultOrder.toString())
+
+                lifecycleScope.launch {
+                    viewModel.getOrderData(resultOrder.key.toString())
+                }.invokeOnCompletion {
+                    if(UserInfo.orderData.status == "принят"){
+                        UserInfo.orderId = resultOrder.key.toString()
+                        Log.i("onChildChanged", "Order is accepted")
+                        Toast.makeText(requireContext(), "Order is accepted", Toast.LENGTH_SHORT).show()
+                        tripDialog.show(requireFragmentManager(), "tripFragment")
+                    }
+                    else if (UserInfo.orderData.status == "завершен") {
+                        UserInfo.orderId = resultOrder.key.toString()
+                        Log.i("onChildChanged", "Order is accepted")
+                        Toast.makeText(requireContext(), "Order is finished", Toast.LENGTH_SHORT).show()
+                        ratingDialog.show(requireFragmentManager(), "tripFragment")
+                    }
+                }
+            }.await()
+        }.invokeOnCompletion {
+            Log.i("resultOrder", "finish")
+        }
 
         return binding.root
     }
@@ -201,6 +245,49 @@ class MainFragment : Fragment() {
         map.addTapListener(geoObjectTapListener)
 
         map.addInputListener(inputListener)
+
+
+
+        Firebase.database.reference.child("orders").orderByKey().limitToLast(1).addChildEventListener(object :
+            ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                Toast.makeText(requireContext(), "Order is created", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                lifecycleScope.launch {
+                    UserInfo.orderId = snapshot.key.toString()
+                    viewModel.getOrderData(UserInfo.orderId)
+                }.invokeOnCompletion {
+                    if(UserInfo.orderData.status == "принят"){
+                        Log.i("onChildChanged", "Order is accepted")
+                        Toast.makeText(requireContext(), "Order is accepted", Toast.LENGTH_SHORT).show()
+                        tripDialog.show(requireFragmentManager(), "tripFragment")
+                    }
+                    else if (UserInfo.orderData.status == "завершен") {
+                        Log.i("onChildChanged", "Order is finished")
+                        Toast.makeText(requireContext(), "Order is finished", Toast.LENGTH_SHORT).show()
+                        ratingDialog.show(requireFragmentManager(), "tripFragment")
+                    }
+                    NavigationController.navHost.navigate(R.id.mapFragment)
+                }
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                Log.i("onChildChanged", "Order is removed")
+                Toast.makeText(requireContext(), "Order is removed", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        }
+        )
 
     }
 

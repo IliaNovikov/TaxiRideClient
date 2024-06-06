@@ -9,7 +9,7 @@
     <string name="email">Почта</string>
     <string name="password">Пароль</string>
     <string name="sign_in_via_phone">Войти через телефон</string>
-    <string name="sign_up">Зарегестрироваться</string>
+    <string name="sign_up">Зарегистрироваться</string>
     <string name="order_a_taxi">Заказать такси</string>
     <string name="search">Поиск</string>
     <string name="comfort">Комфорт</string>
@@ -66,4 +66,12 @@
     <string name="trip">Поездка</string>
     <string name="rate_a_trip">Оцените поездку</string>
     <string name="thanks_for_the_feedback">Спасибо за отзыв</string>
+    <string name="expenses">Расходы</string>
+    <string name="total_orders">Всего заказов:</string>
+    <string name="tariff">По тарифам</string>
+    <string name="last_week">За последнюю неделю</string>
+    <string name="chat_with_driver">Чат с водителем</string>
+    <string name="you">Вы</string>
+    <string name="driver">Водитель</string>
+    <string name="order_history">История заказов</string>
 </resources>

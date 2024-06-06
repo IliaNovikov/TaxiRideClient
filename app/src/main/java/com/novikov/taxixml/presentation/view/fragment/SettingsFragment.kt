@@ -50,7 +50,7 @@ class SettingsFragment : Fragment() {
         }.invokeOnCompletion {
             loadingDialog.dismiss()
             binding.etName.setText(viewModel.name.value.toString())
-            binding.etPhoneNumber.setText(viewModel.phone.value.toString())
+//            binding.etPhoneNumber.setText(viewModel.phone.value.toString())
         }
 
         binding.addNewCardBlock.setOnClickListener {
@@ -64,6 +64,10 @@ class SettingsFragment : Fragment() {
         binding.rvSavedCards.adapter = SavedCardAdapter(requireContext(), UserInfo.cards)
 
         binding.rvSavedAddresses.adapter = SavedAddressAdapter(requireContext(), UserInfo.savedAddresses)
+
+        binding.tvExpenses.setOnClickListener {
+            NavigationController.navHost.navigate(R.id.action_settingsFragment_to_expensesFragment)
+        }
 
         return binding.root
     }

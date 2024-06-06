@@ -6,10 +6,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.novikov.taxixml.R
 import com.novikov.taxixml.domain.model.Position
+import com.novikov.taxixml.domain.usecase.GetOrderDataUseCase
 import com.novikov.taxixml.domain.usecase.GetUserPositionUseCase
 import com.novikov.taxixml.domain.usecase.SearchByAddressUseCase
 import com.novikov.taxixml.domain.usecase.SearchByPointUseCase
 import com.novikov.taxixml.domain.usecase.SetUserPositionUseCase
+import com.novikov.taxixml.singleton.UserInfo
 import com.yandex.mapkit.GeoObject
 import com.yandex.mapkit.GeoObjectCollection
 import com.yandex.mapkit.RequestPoint
@@ -38,6 +40,7 @@ class MainFragmentViewModel @Inject constructor(
     private val app: Application,
     private val getUserPositionUseCase: GetUserPositionUseCase,
     private val setUserPositionUseCase: SetUserPositionUseCase,
+    private val getOrderDataUseCase: GetOrderDataUseCase
 ) : AndroidViewModel(app) {
 
     var position: MutableLiveData<Position> = MutableLiveData()
@@ -197,6 +200,10 @@ class MainFragmentViewModel @Inject constructor(
         }
         geoObject = resultGeoObject.obj!!
         mldGeoObject.value = geoObject
+    }
+
+    suspend fun getOrderData(orderId: String){
+        UserInfo.orderData = getOrderDataUseCase.execute(orderId)
     }
 
 }

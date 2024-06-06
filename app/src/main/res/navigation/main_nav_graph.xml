@@ -50,6 +50,9 @@
         <action
             android:id="@+id/action_settingsFragment_to_addCardFragment"
             app:destination="@id/addCardFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_expensesFragment"
+            app:destination="@id/expensesFragment" />
     </fragment>
     <fragment
         android:id="@+id/addAddressFragment"
@@ -98,12 +101,17 @@
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" >
         <action
-            android:id="@+id/action_mapFragment_to_tripAwaitingFragment"
-            app:destination="@id/tripAwaitingFragment" />
+            android:id="@+id/action_mapFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
     </fragment>
     <fragment
-        android:id="@+id/tripAwaitingFragment"
-        android:name="com.novikov.taxixml.presentation.view.fragment.TripAwaitingFragment"
-        android:label="fragment_trip_awaiting"
-        tools:layout="@layout/fragment_trip_awaiting" />
+        android:id="@+id/expensesFragment"
+        android:name="com.novikov.taxixml.presentation.view.fragment.ExpensesFragment"
+        android:label="fragment_expenses"
+        tools:layout="@layout/fragment_expenses" />
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.novikov.taxixml.presentation.view.fragment.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
 </navigation>

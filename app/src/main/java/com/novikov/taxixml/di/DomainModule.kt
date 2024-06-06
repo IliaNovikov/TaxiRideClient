@@ -4,6 +4,7 @@ import com.novikov.taxixml.domain.repository.AddressRepository
 import com.novikov.taxixml.domain.repository.OrderRepository
 import com.novikov.taxixml.domain.repository.UserDataRepository
 import com.novikov.taxixml.domain.repository.UserPositionRepository
+import com.novikov.taxixml.domain.usecase.ChangeOrderStatusUseCase
 import com.novikov.taxixml.domain.usecase.CreateOrderUseCase
 import com.novikov.taxixml.domain.usecase.GetAddressesByStringUseCase
 import com.novikov.taxixml.domain.usecase.GetUserDataUseCase
@@ -89,6 +90,11 @@ class DomainModule {
     @Provides
     fun provideSetDriverRatingUseCase(orderRepository: OrderRepository): SetDriverRatingUseCase{
         return SetDriverRatingUseCase(orderRepository)
+    }
+
+    @Provides
+    fun provideChangeOrderStatus(orderRepository: OrderRepository): ChangeOrderStatusUseCase{
+        return ChangeOrderStatusUseCase(orderRepository)
     }
 
 }

@@ -58,7 +58,6 @@ class TariffDialog(var distance: Float = 0.0f, var traffic: Float = 0.0f) : Bott
         override fun onCardChoose(card: Card) {
             tvCard.text = context!!.getString(R.string.points) + card.number.substring(card.number.length - 4, card.number.length)
         }
-
     }
 
     override fun onCreateView(
@@ -171,31 +170,6 @@ class TariffDialog(var distance: Float = 0.0f, var traffic: Float = 0.0f) : Bott
                 loadingDialog.dismiss()
                 this.dismiss()
                 TripAwaitingDialog().show(requireFragmentManager(), "tripAwaitingDialog")
-                com.google.firebase.Firebase.database.reference.
-                child("orders")
-                    .child(UserInfo.orderId)
-                    .child("status").addValueEventListener(object: ValueEventListener{
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            if (snapshot.value.toString() == "в ожидании")
-                                Toast.makeText(requireContext(), "Ожидайте водителя", Toast.LENGTH_SHORT).show()
-                            else if(snapshot.value.toString() == "принят"){
-                                Toast.makeText(requireContext(), "Водитель принял заказ", Toast.LENGTH_SHORT).show()
-                                TripDialog().show(requireFragmentManager(), "tripDialog")
-                                this@TariffDialog.dismiss()
-                            }
-                            else if(snapshot.value.toString() == "завершен") {
-                                RatingDialog().show(requireFragmentManager(), "ratingDialog")
-                                Toast.makeText(requireContext(), "Поездка завершена", Toast.LENGTH_SHORT).show()
-                            }
-                            Log.i("orderStatusListener", snapshot.value.toString())
-                            Toast.makeText(requireContext(), "Заказ принят", Toast.LENGTH_SHORT).show()
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
-                        }
-
-                    })
             }
         }
 

@@ -15,6 +15,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.novikov.taxixml.R
 import com.novikov.taxixml.databinding.FragmentMapBinding
@@ -126,12 +130,106 @@ class MapFragment : Fragment() {
         binding.btnContinue.isEnabled = false
         binding.btnTrip.isVisible = false
 
+        Firebase.database.reference
+            .child("orders").orderByChild("clientUid").limitToLast(1)
+            .get().addOnCompleteListener {
+            if (it.result.child("status").value.toString() != "оценен")
+                UserInfo.orderId = it.result.children.elementAt(0).key.toString()
+        }
+
+        Firebase.database.reference.
+        child("orders")
+            .child(UserInfo.orderId).addChildEventListener(object: ChildEventListener {
+
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                    Log.i("child", "child added")
+                }
+
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+//                    if (snapshot.child("status").value.toString() == "в ожидании")
+//                        Toast.makeText(requireContext(), "Ожидайте водителя", Toast.LENGTH_SHORT).show()
+//                    else if(snapshot.child("status").value.toString() == "принят"){
+//                        Toast.makeText(requireContext(), "Водитель принял заказ", Toast.LENGTH_SHORT).show()
+//                        tripDialog.show(requireFragmentManager(), "tripDialog")
+//                        try {
+//                            tripAwaitingDialog.dismiss()
+//                        }
+//                        catch (ex: Exception){
+//                            Log.e("orderAccepted", ex.message.toString())
+//                        }
+//
+//                    }
+//                    else if(snapshot.child("status").value.toString() == "завершен") {
+//                        NavigationController.navHost.navigate(R.id.mapFragment)
+//                        tripDialog.dismiss()
+//                        ratingDialog.show(requireFragmentManager(), "ratingDialog")
+//                        Toast.makeText(requireContext(), "Поездка завершена", Toast.LENGTH_SHORT).show()
+//                    }
+//                    Log.i("orderStatusListener", snapshot.value.toString())
+//                    Toast.makeText(requireContext(), "Заказ принят", Toast.LENGTH_SHORT).show()
+                    NavigationController.navHost.navigate(R.id.mapFragment)
+                }
+
+                override fun onChildRemoved(snapshot: DataSnapshot) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.i("child", "cancelled")
+                }
+
+            })
+
+//        Firebase.database.reference.
+//        child("orders")
+//            .child(UserInfo.orderId)
+//            .child("status").addListenerForSingleValueEvent(object: ValueEventListener {
+//                override fun onDataChange(snapshot: DataSnapshot) {
+//                    if (snapshot.value.toString() == "в ожидании")
+//                        Toast.makeText(requireContext(), "Ожидайте водителя", Toast.LENGTH_SHORT).show()
+//                    else if(snapshot.value.toString() == "принят"){
+//                        Toast.makeText(requireContext(), "Водитель принял заказ", Toast.LENGTH_SHORT).show()
+//                        tripDialog.show(requireFragmentManager(), "tripDialog")
+//                        try {
+//                            tripAwaitingDialog.dismiss()
+//                        }
+//                        catch (ex: Exception){
+//                            Log.e("orderAccepted", ex.message.toString())
+//                        }
+//
+//                    }
+//                    else if(snapshot.value.toString() == "завершен") {
+//                        NavigationController.navHost.navigate(R.id.mapFragment)
+//                        tripDialog.dismiss()
+//                        ratingDialog.show(requireFragmentManager(), "ratingDialog")
+//                        Toast.makeText(requireContext(), "Поездка завершена", Toast.LENGTH_SHORT).show()
+//                    }
+//                    Log.i("orderStatusListener", snapshot.value.toString())
+//                    Toast.makeText(requireContext(), "Заказ принят", Toast.LENGTH_SHORT).show()
+//                }
+//
+//                override fun onCancelled(error: DatabaseError) {
+//                    Log.i("child", "cancelled")
+//                }
+//
+//            })
+
         try{
             lifecycleScope.launch {
                 viewModel.getCurrentPosition()
             }.invokeOnCompletion {
                 lifecycleScope.launch {
+                    try{
                     viewModel.getPointSearchResult(Point(viewModel.position.value!!.latitude, viewModel.position.value!!.longitude), map)
+                    }
+                    catch (ex: Exception){
+                        Log.e("position", ex.message.toString())
+                    }
+
                 }.invokeOnCompletion {
                     try {
                         binding.mvMain.map.move(CameraPosition(
@@ -157,17 +255,32 @@ class MapFragment : Fragment() {
                     "в ожидании" -> {
                         binding.etStartAddress.setText(UserInfo.orderData.startAddress)
                         binding.etEndAddress.setText(UserInfo.orderData.endAddress)
-                        tripAwaitingDialog.show(requireFragmentManager(), "tripAwatingDialog")
+                        if(!tripAwaitingDialog.isAdded)
+                            tripAwaitingDialog.show(requireFragmentManager(), "tripAwatingDialog")
                     }
                     "принят" -> {
                         binding.etStartAddress.setText(UserInfo.orderData.startAddress)
                         binding.etEndAddress.setText(UserInfo.orderData.endAddress)
-                        tripDialog.show(requireFragmentManager(), "tripDialog")
+                        if (!tripDialog.isAdded)
+                            tripDialog.show(requireFragmentManager(), "tripDialog")
                         binding.btnTrip.isVisible = true
+                        try{
+                            if (!Firebase.database.reference.child("chats").orderByChild("clientUid").equalTo(UserInfo.uid).limitToLast(1).get().result.hasChildren()){
+                                Log.i("chat", "work")
+                                val ref = Firebase.database.reference.child("chats").push()
+                                ref.child("clientUid").setValue(UserInfo.uid)
+                                ref.child("driverUid").setValue(UserInfo.orderData.driverUid)
+                            }
+                        }
+                        catch (ex: Exception){
+                            Log.e("chat", ex.message.toString())
+                        }
+
                     }
                     "завершен" -> {
                         binding.btnTrip.isVisible = false
-                        ratingDialog.show(requireFragmentManager(), "ratingDialog")
+                        if (!ratingDialog.isAdded)
+                            ratingDialog.show(requireFragmentManager(), "ratingDialog")
                     }
                 }
             }

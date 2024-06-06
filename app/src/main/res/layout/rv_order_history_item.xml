@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        style="@style/main_text_style"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivPointToPoint"
+        android:layout_width="60dp"
+        android:layout_height="120dp"
+        android:src="@drawable/point_to_point"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDate" />
+
+    <TextView
+        android:id="@+id/tvStartAddress"
+        style="@style/main_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start address"
+        app:layout_constraintStart_toEndOf="@+id/ivPointToPoint"
+        app:layout_constraintTop_toTopOf="@+id/ivPointToPoint"
+        android:layout_marginTop="12dp"
+        android:singleLine="false"
+        android:maxWidth="240dp"/>
+
+    <TextView
+        android:id="@+id/tvEndAddress"
+        style="@style/main_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="End address"
+        app:layout_constraintBottom_toBottomOf="@+id/ivPointToPoint"
+        app:layout_constraintStart_toEndOf="@+id/ivPointToPoint"
+        android:singleLine="false"
+        android:maxWidth="240dp"/>
+
+    <TextView
+        android:id="@+id/tvDriverName"
+        style="@style/main_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="DriverName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivPointToPoint" />
+
+    <TextView
+        android:id="@+id/tvCarBrand"
+        style="@style/main_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="CarBrand"
+        app:layout_constraintStart_toEndOf="@+id/tvDriverName"
+        app:layout_constraintTop_toBottomOf="@+id/ivPointToPoint"
+        android:layout_marginStart="16dp"/>
+
+    <TextView
+        android:id="@+id/tvCarNumber"
+        style="@style/main_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="CarNumber"
+        app:layout_constraintStart_toEndOf="@+id/tvCarBrand"
+        app:layout_constraintTop_toBottomOf="@+id/ivPointToPoint"
+        android:layout_marginStart="16dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,8 +31,8 @@ class OrderRepositoryImpl : OrderRepository {
         }
     }
 
-    override suspend fun changeOrderStatus(status: String) {
-        TODO("Not yet implemented")
+    override suspend fun changeOrderStatus(orderId: String, status: String) {
+        dbRef.child("orders").child(orderId).child("status").setValue(status).await()
     }
 
     override suspend fun deleteOrder(orderId: String) {
@@ -107,6 +107,7 @@ class OrderRepositoryImpl : OrderRepository {
             Log.i("key", key)
             if (!key.isNullOrEmpty()){
                 val orderData = getOrderData(key)
+//                UserInfo.orderId = key
                 return orderData
             }
             else
@@ -132,8 +133,9 @@ class OrderRepositoryImpl : OrderRepository {
                 driverInfo.carNumber = it.result.child("carNumber").value.toString()
             }.await()
             dbRef.child("applications").child(driverUid).child("driver").get().addOnCompleteListener {
+                Log.i("rating", it.result.child("rating").value.toString())
                 driverInfo.rating = it.result.child("rating").value.toString().toFloat()
-            }
+            }.await()
         }
         catch (ex: Exception){
             Log.e("getDriverInfo", ex.message.toString())
