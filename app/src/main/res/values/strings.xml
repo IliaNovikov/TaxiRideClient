@@ -78,4 +78,5 @@
     <string name="you">You</string>
     <string name="driver">Driver</string>
     <string name="order_history">Order history</string>
+    <string name="there_is_your_chat_with_driver">There\'s your chat with driver</string>
 </resources>

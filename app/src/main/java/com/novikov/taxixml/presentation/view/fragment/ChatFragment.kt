@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.Firebase
 import com.google.firebase.database.ChildEventListener
@@ -70,6 +71,7 @@ class ChatFragment : Fragment() {
                     }
                     messages.removeIf { m -> m.text.isNullOrEmpty() || m.text == "null" }
                     binding.rvMessages.adapter = adapter
+                    binding.tvNoMessages.isVisible = messages.size == 0
                 }
 
                 override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {

@@ -74,4 +74,5 @@
     <string name="you">Вы</string>
     <string name="driver">Водитель</string>
     <string name="order_history">История заказов</string>
+    <string name="there_is_your_chat_with_driver">Здесь будет ваш чат с водителем</string>
 </resources>

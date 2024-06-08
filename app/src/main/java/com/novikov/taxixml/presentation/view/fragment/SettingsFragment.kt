@@ -8,8 +8,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import com.novikov.taxixml.R
 import com.novikov.taxixml.adapters.SavedAddressAdapter
 import com.novikov.taxixml.adapters.SavedCardAdapter
@@ -19,6 +22,7 @@ import com.novikov.taxixml.singleton.NavigationController
 import com.novikov.taxixml.singleton.UserInfo
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
@@ -31,7 +35,6 @@ class SettingsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
 
         binding = FragmentSettingsBinding.inflate(inflater)
 
@@ -67,6 +70,19 @@ class SettingsFragment : Fragment() {
 
         binding.tvExpenses.setOnClickListener {
             NavigationController.navHost.navigate(R.id.action_settingsFragment_to_expensesFragment)
+        }
+
+        binding.btnSave.setOnClickListener {
+            lifecycleScope.launch {
+                Firebase.database.reference.child("clients").child(UserInfo.uid).child("name").setValue(binding.etName.text).addOnCompleteListener {
+                    if (it.isSuccessful){
+                        Toast.makeText(requireContext(), "Данные успешно сохранены", Toast.LENGTH_SHORT).show()
+                    }
+                    else
+                        Toast.makeText(requireContext(), "Упс, кажется произошла ошибка", Toast.LENGTH_SHORT).show()
+                }.await()
+            }
+
         }
 
         return binding.root

@@ -39,12 +39,13 @@
             android:id="@+id/rvMessages"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginHorizontal="8dp"
             android:layout_marginBottom="4dp"
+            android:background="@color/primaryColor"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/tilMessage"
             app:layout_constraintTop_toBottomOf="@+id/textView4"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:background="@color/primaryColor"
-            android:layout_marginHorizontal="8dp"/>
+            tools:layout_editor_absoluteX="8dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilMessage"
@@ -66,6 +67,19 @@
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tvNoMessages"
+            style="@style/main_text_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/there_is_your_chat_with_driver"
+            app:layout_constraintBottom_toBottomOf="@+id/rvMessages"
+            app:layout_constraintEnd_toEndOf="@+id/rvMessages"
+            app:layout_constraintStart_toStartOf="@+id/rvMessages"
+            app:layout_constraintTop_toTopOf="@+id/rvMessages"
+            android:textColor="@color/subTextColor"
+            android:visibility="invisible"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
